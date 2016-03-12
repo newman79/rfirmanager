@@ -1,0 +1,182 @@
+.cDivRightPanel
+{
+	/*display:inline-block;*/
+	/*float: left;*/
+	position: absolute;
+    /*width: 800px;*/
+	left:428px;
+    height: 100%;
+	right:0px;
+    /*overflow: fill;*/
+	border-radius: 10px;
+    border: 3px ridge #4d91b7;
+	margin:0px;
+	padding:0px;
+}
+
+
+.cIviewer
+{	
+    height: 90%;
+    border: 1px solid black;
+    position: relative;
+	/*margin:5px;
+    /*position: absolute;*/
+	/*background-color: #ebefea; /* #e0e0e0;*/
+    -ms-touch-action: none;
+	
+	background-color: #0ae;	
+	
+	/*background-image: repeating-linear-gradient(to bottom, blue 5px, rgba(0, 0, 255, .2) 5px, rgba(255, 0, 0, .9) 40px); /* determines size */
+
+	/*background: linear-gradient(0deg, white, white 65%, #8b0 35%); */
+	
+	/*
+	background-image: linear-gradient(45deg, #555 25%, transparent 25%, transparent),
+							  linear-gradient(-45deg, #555 25%, transparent 25%, transparent),
+							  linear-gradient(45deg, transparent 75%, #555 75%),
+			  				  linear-gradient(-45deg, transparent 75%, #555 75%);
+	*/	
+	background: url(../img/Checkboard.gif);	
+	background-size: 40px 40px;
+}
+            
+/*----------------------------------------------------------------------------------------------------------------------------------------*/
+/*                                                       Embeded viewer tools (zoom in, out, fit)                                         */
+/*----------------------------------------------------------------------------------------------------------------------------------------*/
+
+.iviewer_common {
+    position:absolute;
+    bottom:10px;
+    border: 1px  solid #4d91b7;	
+	border-radius:5px;
+    height: 32px;
+    z-index: 4000;
+}
+
+.iviewer_cursor {
+    cursor: url(../img/hand.cur) 6 8, pointer;
+}
+
+.iviewer_drag_cursor {
+    cursor: url(../img/grab.cur) 6 8, pointer;
+}
+
+.iviewer_button {
+    width: 32px;
+    cursor: pointer;
+    background-position: center center;
+    background-repeat: no-repeat;
+}
+
+.iviewer_zoom_in {
+    left: 20px;
+    background: url(../img/iviewer.zoom_in.gif);
+}
+
+.iviewer_zoom_out {
+    left: 55px;
+    background: url(../img/iviewer.zoom_out.gif);
+}
+
+.iviewer_zoom_zero {
+    left: 90px;
+    background:url(../img/iviewer.zoom_zero.gif);
+}
+
+.iviewer_zoom_fit {
+    left: 125px;
+    background:url(../img/iviewer.zoom_fit.gif);
+}
+
+.iviewer_zoom_status {
+    left: 160px;
+    font: 1em/28px Sans;
+    color: #000;
+    background-color: #fff;
+    text-align: center;
+	line-height:32px;
+    width: 60px;
+	background:rgba(50,50,255,0.2);
+}
+
+.iviewer_rotate_left {
+    left: 227px;
+    background: #fff url(../img/iviewer.rotate_left.png) center center no-repeat;
+}
+
+.iviewer_rotate_right {
+    left: 262px;
+    background: #fff url(../img/iviewer.rotate_right.png) center center no-repeat;
+}
+
+.iviewer_tryToDraw {
+    left: 300px;
+    background: #fff center center no-repeat;
+}
+
+.iviewer_divImgbackground{
+    right: 10px;
+	height:72px;
+	width:80px;
+    background: #fff center center no-repeat;
+}
+
+.iviewer_divChangeBgImgUp{
+	position:absolute;
+	width:100%;
+	height:26px;
+	top:0px; 
+	border-radius:6px; 
+	background:url(../img/up-icon.png);
+}
+.iviewer_divChangeBgImgDown{
+	position:absolute;
+	width:100%;
+	height:26px;
+	bottom:0px; 
+	border-radius:6px; 
+	background:url(../img/down-icon.png);
+}
+.iviewer_divSelectedBg{
+	position:absolute;
+	width:100%;
+	height:20px;
+	top:26px;
+	background:rgba(50,50,255,0.2);
+	overflow:hidden;
+	text-align: center;
+	color:#4d91b7;
+}
+
+/*----------------------------------------------------------------------------------------------------------------------------------------*/
+/*                                                       CUSTOM MENU (Right click (context menu))                                         */
+/*----------------------------------------------------------------------------------------------------------------------------------------*/
+/* The whole thing */
+.cCustomMenu {
+    display: none;
+    z-index: 5000;
+	width:100px;
+    position: absolute;
+    overflow: hidden;
+    border: 1px solid #CCC;
+    white-space: nowrap;
+    font-family: sans-serif;
+	font-size:13px;
+    background: #FFF;
+    color: #333;
+    border-radius: 5px;
+    padding: 0;
+}
+
+/* Each of the items in the list */
+.cCustomMenu li {
+    padding: 3px 6px;
+    cursor: pointer;
+    list-style-type: none;
+    transition: all .3s ease;
+}
+
+.cCustomMenu li:hover {
+    background-color: #DEF;
+}

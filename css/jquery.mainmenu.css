@@ -1,0 +1,248 @@
+
+body {
+padding: 0px;
+margin:0px;
+/*font-family: Arial, Helvetica, sans-serif;*/
+/*line-height: 1.5;*/
+/*font-size: 14px;        */
+}
+
+
+.cDivLeftPanel {
+	/*display:inline-block;*/
+	padding: 0px;
+	margin:0px;
+	width:420px;
+	height:100%;
+	float: left;
+	position: absolute;
+	/* min-width:125px; */
+   	border-radius: 10px;
+    border: 3px ridge #4d91b7;
+}
+
+.tabs-menu {
+	height: 30px;
+	padding:0px;
+	margin:0px;
+    /*clear: both;*/
+}
+
+.menuItemContainer {
+	/*display:block;*/
+	padding: 0px;
+	margin:0px;
+	
+	position:absolute;
+	top:30px;
+	bottom:0px;
+	left:0px;
+	right:0px;
+	
+	border-radius: 5px;
+    border: 1px solid #d4d4d1;
+    background-color: #fff;
+}
+
+.tabs-menu li {
+	display:inline;	
+    height: 30px;
+    line-height: 30px;
+    float: top; 
+    margin-right: 10px;
+    background-color: #a8d7ff;
+    background-color: #a8d7ff;
+    border-top	: 1px solid #d4d4d1;
+    border-right: 1px solid #d4d4d1;
+    border-left	: 1px solid #d4d4d1;
+}
+
+.tabs-menu li.current {
+    position: relative;
+    background-color: #fff;
+    border-bottom: 1px solid #fff;
+}
+
+.tabs-menu li a {
+    padding: 3px;
+    text-transform: uppercase;
+    color: #fff;
+    text-decoration: none; 
+}
+
+.tabs-menu .current a {
+	position:relative;
+    color: #2e7da3;    
+}
+
+.tab-content {
+	position:absolute;
+    width: 100%;
+	height:98%;
+	top:0px;
+	bottom:0px;
+    padding: 1px;
+    display: none;	
+}
+
+#tab-1 {
+ display: inline;   
+}
+
+
+.cDivMore
+{
+	position:absolute; 
+	top:0px;
+	right:30px; 
+	text-align:center; 
+	height:30px; 
+	line-height:20px; 
+	z-index:5; 
+	background:white; 
+	font-size:20px; 
+	display:none;	
+}
+
+.cDivMore:hover {
+	border-radius:6px; 
+	border:1px solid #84bbf3;
+	background-color: #b3e4ff; 
+}
+
+.cDivResizer
+{
+	position:absolute; 
+	width:14px; 
+	height:20%; 
+	right:-12px; 
+	top:40%; 
+	z-index:5; 
+	background: url(../img/Splitter.gif) no-repeat; 
+	background-size: 20px 20px; 
+	background-position: center center; 
+	background-color: #ddd; 
+	border-radius:6px; 
+	border:1px solid #84bbf3;
+}
+
+.cDivResizer:hover
+{
+	cursor: url(../img/Splitter.cur.gif) 16 32, pointer;
+}
+
+.cBtnHideShowLeftPanel {
+	-moz-box-shadow:inset 0px 1px 0px 0px #dcecfb;
+	-webkit-box-shadow:inset 0px 1px 0px 0px #dcecfb;
+	box-shadow:inset 0px 1px 0px 0px #dcecfb;
+	background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #bddbfa), color-stop(1, #80b5ea));
+	background:-moz-linear-gradient(top, #bddbfa 5%, #80b5ea 100%);
+	background:-webkit-linear-gradient(top, #bddbfa 5%, #80b5ea 100%);
+	background:-o-linear-gradient(top, #bddbfa 5%, #80b5ea 100%);
+	background:-ms-linear-gradient(top, #bddbfa 5%, #80b5ea 100%);
+	background:linear-gradient(to bottom, #bddbfa 5%, #80b5ea 100%);
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#bddbfa', endColorstr='#80b5ea',GradientType=0);
+	background-color:#bddbfa;
+	-moz-border-radius:6px;
+	-webkit-border-radius:6px;
+	border-radius:6px;
+	border:1px solid #84bbf3;
+	display:inline-block;
+	cursor:pointer;
+	color:#ffffff;
+	font-family:Arial;
+	font-size:15px;
+	font-weight:bold;
+	padding:3px 2px;
+	text-decoration:none;
+	text-shadow:0px 1px 0px #528ecc;
+}
+.cBtnHideShowLeftPanel:hover {
+	background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #80b5ea), color-stop(1, #bddbfa));
+	background:-moz-linear-gradient(top, #80b5ea 5%, #bddbfa 100%);
+	background:-webkit-linear-gradient(top, #80b5ea 5%, #bddbfa 100%);
+	background:-o-linear-gradient(top, #80b5ea 5%, #bddbfa 100%);
+	background:-ms-linear-gradient(top, #80b5ea 5%, #bddbfa 100%);
+	background:linear-gradient(to bottom, #80b5ea 5%, #bddbfa 100%);
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#80b5ea', endColorstr='#bddbfa',GradientType=0);
+	background-color:#80b5ea;
+}
+
+.cBtnAddOrModify
+{
+	border-radius:6px;
+	border:1px solid #84bbf3;
+}
+
+.cBtnAddOrModify:hover
+{
+	background-color:#80b5ea;
+}
+
+.cBtnHideShowLeftPanel:active {
+	position:relative;
+	top:1px;
+}
+
+.tab-content .cFieldsetObjectProperties
+{
+	background-color: #f7fbff; 
+	color : #2e7da3; 
+	font-size:13px;
+	position:relative;
+	padding:1px;
+}
+
+.cFieldsetObjectProperties label
+{
+	display:inline-block;
+	position:relative;
+	font-size:11px;
+	left:0px;
+	height:15px;
+	text-align:center;
+	color : #84bbf3; 
+	
+	width:120px;
+	
+	background-color: #e9f7ff;
+	margin-top:5px;
+	margin-bottom:5px;
+	margin-right:10px;
+	padding-left:5px;
+	padding-right:5px;
+	
+	border-radius: 5px;
+	border:1px solid #84bbf3;
+}
+
+.cFieldsetObjectProperties input
+{
+	display:inline-block;
+	position:relative;
+	/*float:left;*/
+	top:2px;
+	/*left:190px;*/
+	font-size:11px;
+	/*height:20px;*/
+	width:80px;
+}
+
+.cFieldsetObjectProperties select
+{
+	display:inline-block;
+	position:relative;
+	/*float:left;*/
+	top:2px;
+	/*left:190px;*/
+	font-size:11px;
+	/*height:20px;*/
+	width:120px;
+}
+
+
+.cFieldsetObjectProperties option
+{
+	font-size:11px;
+	font-style: italic;
+}

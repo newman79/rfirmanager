@@ -1,0 +1,20 @@
+{
+	"Backgrounds"			:
+	{
+		"RDC"		:"../img/Plan1_ezaeaaaaaaaaaaaaaaaa.jpg",
+		"Etage1"	:"../img/Plan3_ezaea.jpg"			
+	},
+	"Switch_Salon_Entree":
+	{
+		"remote"			: "remote_switch_dio_by_chacon_salon_couloir",
+		"desc"				: "Interrupteur Salon entree",
+		"position"			: {"x":0,"y":0},
+		"current_state"		: "",
+		"signalsTOstate"	: 
+		{
+			"remote_switch_dio_by_chacon_salon_couloir.ON1"		:	"ON",
+			"remote_switch_dio_by_chacon_salon_couloir.OFF1"	:	"OFF"
+		},
+		"InBackground":["RDC", "Etage1"]
+	}
+}

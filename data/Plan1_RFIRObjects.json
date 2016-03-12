@@ -1,0 +1,111 @@
+{
+	"Backgrounds"			:
+	{
+		"Etage1"	:"../img/Plan_21rueVictorHugo_2eEtage_877_746.jpg",
+		"Etage2"	:"../img/Plan_21rueVictorHugo_2eEtage_877_746.jpg"
+	},
+	"Objects"				:
+	{
+		"LumiereSalon_Salon":
+		{
+			"type"				: "Light",
+			"remote"			: "remote_switch_dio_by_chacon_salon_entree,remote_switch_dio_by_chacon_salon_couloir",
+			"desc"				: "Lumière Salon",
+			"position"			: {"x":51.2,"y":20.5},
+			"current_state"		: "",
+			"signalsTOstate"	: 
+			{
+				"remote_switch_dio_by_chacon_salon_couloir.ON1"		:	"ON",
+				"remote_switch_dio_by_chacon_salon_couloir.OFF1"	:	"OFF",
+				"remote_switch_dio_by_chacon_salon_entree.ON1"		:	"ON",
+				"remote_switch_dio_by_chacon_salon_entree.OFF1"		:	"OFF"
+			},
+			"InBackground":["Etage1"]
+		},
+		"RFPowerPlug1_Chacon_NAS":
+		{
+			"type"				: "RFPowerPlug",
+			"remote"			: "remote_radiocommanded_chacon",
+			"desc"				: "Prise NAS",
+			"position"			: {"x":42,"y":42},
+			"current_state"		: "",
+			"signalsTOstate"	: 
+			{
+				"remote_radiocommanded_chacon.GROUPS_I_BTN1_ON":"ON"  ,"remote_radiocommanded_chacon.GROUPS_I_BTN1_OFF":"OFF"  ,
+				"remote_radiocommanded_chacon.GROUPS_II_BTN1_ON":"ON" ,"remote_radiocommanded_chacon.GROUPS_II_BTN1_OFF":"OFF" ,
+				"remote_radiocommanded_chacon.GROUPS_III_BTN1_ON":"ON","remote_radiocommanded_chacon.GROUPS_III_BTN1_OFF":"OFF",
+				"remote_radiocommanded_chacon.GROUPS_IV_BTN1_ON":"ON" ,"remote_radiocommanded_chacon.GROUPS_IV_BTN1_OFF":"OFF" 
+			}
+			,
+			"InBackground":["Etage1"]
+		},
+		"RFPowerPlug2_Chacon_Purificateur":
+		{
+			"type"				: "RFPowerPlug",
+			"remote"			: "remote_radiocommanded_chacon",
+			"desc"				: "Prise purificateur salon",
+			"position"			: {"x":32,"y":7},
+			"current_state"		: "",
+			"signalsTOstate"	: 
+			{
+				"remote_radiocommanded_chacon.GROUPS_I_BTN2_ON":"ON"  ,"remote_radiocommanded_chacon.GROUPS_I_BTN2_OFF":"OFF"  ,
+				"remote_radiocommanded_chacon.GROUPS_II_BTN2_ON":"ON" ,"remote_radiocommanded_chacon.GROUPS_II_BTN2_OFF":"OFF" ,
+				"remote_radiocommanded_chacon.GROUPS_III_BTN2_ON":"ON","remote_radiocommanded_chacon.GROUPS_III_BTN2_OFF":"OFF",
+				"remote_radiocommanded_chacon.GROUPS_IV_BTN2_ON":"ON" ,"remote_radiocommanded_chacon.GROUPS_IV_BTN2_OFF":"OFF" 
+			}
+			,
+			"InBackground":["Etage1"]
+		},
+		"RFPowerPlug3_Chacon_RadiateurCouloir":
+		{
+			"type"				: "RFPowerPlug",
+			"remote"			: "remote_radiocommanded_chacon",
+			"desc"				: "Prise radiateur couloir",
+			"position"			: {"x":37,"y":58},
+			"current_state"		: "",
+			"signalsTOstate"	: 
+			{
+				"remote_radiocommanded_chacon.GROUPS_I_BTN3_ON":"ON"  ,"remote_radiocommanded_chacon.GROUPS_I_BTN3_OFF":"OFF"  ,
+				"remote_radiocommanded_chacon.GROUPS_II_BTN3_ON":"ON" ,"remote_radiocommanded_chacon.GROUPS_II_BTN3_OFF":"OFF" ,
+				"remote_radiocommanded_chacon.GROUPS_III_BTN3_ON":"ON","remote_radiocommanded_chacon.GROUPS_III_BTN3_OFF":"OFF",
+				"remote_radiocommanded_chacon.GROUPS_IV_BTN3_ON":"ON" ,"remote_radiocommanded_chacon.GROUPS_IV_BTN3_OFF":"OFF" 
+			}
+			,
+			"InBackground":["Etage1"]
+		},
+		"RFPowerPlug4_Chacon_OrdinateurFixe":
+		{
+			"type"				: "RFPowerPlug",
+			"remote"			: "remote_radiocommanded_chacon",
+			"desc"				: "Prise PC fixe",
+			"position"			: {"x":29,"y":17},
+			"current_state"		: "",
+			"signalsTOstate"	: 
+			{
+				"remote_radiocommanded_chacon.GROUPS_I_BTN4_ON":"ON"  ,"remote_radiocommanded_chacon.GROUPS_I_BTN4_OFF":"OFF",		
+				"remote_radiocommanded_chacon.GROUPS_II_BTN4_ON":"ON" ,"remote_radiocommanded_chacon.GROUPS_II_BTN4_OFF":"OFF",
+				"remote_radiocommanded_chacon.GROUPS_III_BTN4_ON":"ON","remote_radiocommanded_chacon.GROUPS_III_BTN4_OFF":"OFF",
+				"remote_radiocommanded_chacon.GROUPS_IV_BTN4_ON":"ON" ,"remote_radiocommanded_chacon.GROUPS_IV_BTN4_OFF":"OFF"
+			}
+			,
+			"InBackground":["Etage1"]
+		},
+		"RFSwitch5_Funry3btn":
+		{
+			"type"				: "RFSwitch",
+			"remote"			: "remote_switch_funry_3btn_1",
+			"desc"				: "Interrupteur Grande Chambre",
+			"position"			: {"x":22,"y":61},
+			"current_state"		: "",
+			"signalsTOstate"	: 
+			{
+				"remote_radiocommanded_chacon.BTN_A":"UNKNOWN",
+				"remote_radiocommanded_chacon.BTN_B":"ON",
+				"remote_radiocommanded_chacon.BTN_C":"UNKNOWN",
+				"remote_radiocommanded_chacon.BTN_D":"OFF"
+			}
+			,
+			"InBackground":["Etage1"]
+		}
+	}
+}
