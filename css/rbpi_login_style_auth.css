@@ -1,0 +1,29 @@
+#banniere {
+  margin: auto;
+  width: 95%;
+  min-width: 500px;
+  height: 130px;
+  background: url("../images/logo-couleur.jpg") no-repeat, url("../images/logo_orme.png") no-repeat;
+  background-size: auto 80%, auto 80%;
+  /*background-position: left, right;*/
+}
+
+#form {
+  margin-top:70px;
+  width: 100%;
+}
+
+fieldset {
+  margin: auto;
+  width: 230px;
+  border-radius: 10px;
+}
+
+input {
+  border: 1px solid gray;
+  width: 100%;
+}
+
+button {
+  float: right;
+}

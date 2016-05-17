@@ -1,19 +1,20 @@
 $(document).ready(function() {
 	
-	var $eventsTable = $("#idTableEvents");
+	var	$statusConsole 	= $("#idInputStatus");	
+	var $eventsTable 	= $("#idTableEvents");
   
-	var myevents = [	{horodate: "01/10/2007", 		remote: "Remote1",	command: "BTN_1",code: "0111101011101"}, 
-					{horodate: "01/10/2007 11:52",	remote: "Remote2",	command: "BTN_2",code: "0110011001001"}];
+	// tests
+	var myevents = [/*	{horodate: "01/10/2007", 		remote: "Remote1",	signal: "BTN_1",desc: "0111101011101"}	*/];
 
 	$eventsTable.jqGrid(
 		{
 			datatype: "local",
 			data: myevents,
-			colNames: ['Event at ', 'Remote', 'Button', 'Signal'],
-			colModel: [	{name: 'horodate',	index: 'horodate',		key: true,	width: "90px",						sorttype: "date"	}, 
+			colNames: ['Event at ', 'Remote', 'Signal', 'Desc'],
+			colModel: [	{name: 'horodate',	index: 'horodate',		key: true,	width: "80px",						sorttype: "date"	}, 
 						{name: 'remote',	index: 'remote',					width: "90px"											}, 
-						{name: 'command',	index: 'command',					width: "90px"											}, 
-						{name: 'code',		index: 'code',						width: "90px",		align: "right",	sorttype: "float"	} 	],
+						{name: 'signal',	index: 'signal',					width: "50px"											}, 
+						{name: 'desc',		index: 'desc',						width: "130px",		align: "left",	sorttype: "text"	} 	],
 			search: true,
 			pager: '#idTableEventsPager',
 			jsonReader: {cell: ""},
@@ -49,7 +50,7 @@ $(document).ready(function() {
 	// Ajouter des lignes au tableau
 	for (var i = 0; i <= 100; i++) 
 	{
-		var newItem = {horodate: new Date().getTime(),	remote: "Remote2",	command: "BTN_2",code: "0110011001001"}
+		var newItem = {horodate: new Date().getTime(),	remote: "Remote2",	signal: "BTN_2",desc: "0110011001001"}
 	//	$eventsTable.jqGrid('addRowData', 0, newItem);
 	}
 	
@@ -59,8 +60,6 @@ $(document).ready(function() {
 	
 	var $widgetJqGrid = $eventsTable.data('ui-jqgrid');
 	
-	console.log ($eventsTable);
-	
 	//$widgetJqGrid.aaabbb = function() {console.log( "aaabbb" );};
 	//$widgetJqGrid.jqGrid("aaabbb");
 	
@@ -68,17 +67,22 @@ $(document).ready(function() {
 	
 	//------------------------- AJOUTER UNE METHODE A UN OBJET JQUERY -------------------------//
 	// Solution1 :   
-	$eventsTable.LogTheEvent = function(remoteVal, commandVal,codeVal)
+	$eventsTable.LogTheEvent = function(remoteVal, signalVal, description)
 	{
 		// $(this) vaut $eventsTable
 		var newTime = new Date();
-		var dayStr;	if (newTime.getDay() < 10)	dayStr = '0' + newTime.getDay(); else dayStr = newTime.getDay();
-		var monthStr;	if (newTime.getMonth() < 10)	monthStr = '0' + newTime.getMonth(); else monthStr = newTime.getMonth();
+		var dayStr 		= newTime.getDate();		if (dayStr 		< 10)	dayStr 		= '0' + dayStr;
+		var monthStr 	= newTime.getMonth() + 1;	if (monthStr 	< 10)	monthStr 	= '0' + monthStr;
+		var hourStr 	= newTime.getHours() + 1;	if (hourStr 	< 10)	hourStr 	= '0' + hourStr;
+		var minuStr 	= newTime.getMinutes() + 1;	if (minuStr 	< 10)	minuStr 	= '0' + minuStr;
+		var secoStr 	= newTime.getSeconds() + 1;	if (secoStr 	< 10)	secoStr 	= '0' + secoStr;
 		
-		var newTimeStr = '' + dayStr + '/' + monthStr + '/' + (newTime.getYear()+1900) + ' ' + newTime.getHours() + ':' + newTime.getMinutes() + ':' + newTime.getSeconds();		
-		$(this).jqGrid('addRowData', 0, {horodate: newTimeStr,	remote: remoteVal,	command: commandVal,code: codeVal});
-		$(this).trigger("reloadGrid"); 
+		var newTimeStr = dayStr + '/' + monthStr + '/' + (newTime.getYear()+1900) + ' ' + hourStr + ':' + minuStr + ':' + secoStr;		
+		$(this).jqGrid('addRowData', 0, {horodate: newTimeStr,	remote: remoteVal,	signal: signalVal, desc:description });
+		$(this).trigger("reloadGrid");
 		
+		$statusConsole.val(newTimeStr + " " + remoteVal + " " + signalVal + " " + description + "\n" + $statusConsole.val());
+		//if($statusConsole.length) $statusConsole.scrollTop($statusConsole[0].scrollHeight - $statusConsole.height());			
 	};	
 	// Solution2 :   
 	$.extend($eventsTable,{Log2:function() {console.log("Log2");}});	
@@ -98,11 +102,13 @@ $(document).ready(function() {
 	
 	// Pour rendre la fonction globale ; pas d'autre moyen jusque là de faire un resize autrement, à part windows.mafonction = function() {...}
 	// Ensuite, on peut appeler ça sur n'importe quel objet jquery ou même $() : $().LogEvent(...);
-	$.fn.LogEvent = function(remote,command,code)
+	$.fn.LogEvent = function(remote,signal,description)
 	{
-		$eventsTable.LogTheEvent(remote,command,code);
+		$eventsTable.LogTheEvent(remote,signal,description);
 		return this;
 	}
+	
+	// $().LogEvent("TELECOMM1","BTN1",""); // C est un log avec l objet `$eventsTable`
 	
 	/* Pour rendre la fonction globale ; pas d'autre moyen jusque là de faire un resize autrement */	
 	$.fn.resizeAlljqGrids = function() 
@@ -118,9 +124,6 @@ $(document).ready(function() {
 		
 	$.fn.LogObj = function() {if (window.console && console.log) {console.log(this);} return this;}	
 	// Permet de faire des appels comme ceci :	$(#monobjet).LogObj().UneMethodeDeLObjet();
-	
-	$().LogEvent("TELECOMM1","BTN1","0100011110101");
-	console.log('C est un log avec l objet `$eventsTable` : gagné',$eventsTable, ' c pas fini');
 	
 	// 2 remarques : 
 	//		- pas de polymorphisme : lire https://learn.jquery.com/jquery-ui/widget-factory/extending-widgets/

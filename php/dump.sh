@@ -1,0 +1,1 @@
+echo $* >> /var/www/rfirmanager/data/rfirevents/outputs.log

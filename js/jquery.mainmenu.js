@@ -7,6 +7,12 @@ $(document).ready(function()
 	var $resizer 		= $("#idDivResizer");
 	var $viewer 		= $("#idDivViewer");
 	var $divmore 		= $("#idDivMore");
+	var $selectDevType 	= $("#idSelectDevType")
+	var $selectDevName 	= $("#idSelectDeviceName");
+	var $selectSignal 	= $("#idSelectCommandedWith");
+	var $selectSignal 	= $("#idSelectCommandedWith");
+	var $idInputDesc 	= $("#idInputDesc");
+	
 	
 	var leftRightInter	= 8;
 	var offsetleftWidth	= 3;
@@ -122,4 +128,132 @@ $(document).ready(function()
 		var selectedItemStr = $("#idInputLoadPlan option:selected").text();
 		$viewer.iviewer('loadPlan',selectedItemStr);
 	});
+	
+	
+	//---------------------- called when an item is selected on device type select ----------------------//
+	selectDeviceType = function(selected) {
+		console.log("   calling selectDeviceType with selected=", selected);
+		jsonPlan = $viewer.iviewer('getPlan');
+		$selectDevName.find('option').remove();
+		$selectSignal.find('option').remove();
+		$("#idBtnSend").css("display","none");
+		prefix=""
+		if (selected === "433 RF commanded device" || selected === "433 RF Sensor") prefix="RF";
+		else if (selected === "IR commanded device")								prefix="IR";
+			
+		for (var devName in jsonPlan["Objects"])	
+		{
+			if (prefix === "" || devName.startsWith(prefix)) {$selectDevName.append($('<option>', {value: devName, text : devName }));}
+		}
+		var deviceName = $selectDevName.children("option")[0];
+		if (deviceName != undefined)
+		{			
+			deviceNameStr = deviceName.value;				
+			$selectDevName.find('option[value="' + deviceNameStr +'"]').prop('selected',true);   
+			$selectDevName.trigger('change'); //trigger a change instead of click			
+		}
+	};
+
+	$selectDevType.change(function(){selectDeviceType($("#idSelectDevType option:selected").text());});	
+	$selectDevName.change(function(){selectDeviceName($("#idSelectDeviceName option:selected").text());});
+	$selectSignal.change(function(){$("#idBtnSendSignal").css("display","visible");});	
+
+	//---------------------- called when an item is selected on device name select ----------------------//
+	selectDeviceName = function(selected) {
+		changeSelectionOnDiv($("#idDevice_"+selected));
+		updateDevicePropertyFields($.selectedDevice);
+		jsonPlan = $viewer.iviewer('getPlan');
+		$selectSignal.find('option').remove();
+		for (var signal in jsonPlan["Objects"][selected]["signalsTOstate"])	
+		{
+			sigArray = signal.split(".");
+			signalStr = sigArray[sigArray.length-1];
+			$OneOption = $('<option>', {value: signalStr, text : signalStr });			
+			if (signalStr.indexOf('ON') > -1)		$OneOption.css('color','green');
+			else if (signalStr.indexOf('OFF') > -1)	$OneOption.css('color','red');
+			else 									$OneOption.css('color','orange');
+			$selectSignal.append($OneOption);
+		}
+		
+		// display or hide signals select
+		var displaySignalsSelect = "none";
+		if (Object.keys(jsonPlan["Objects"][selected]["signalsTOstate"]).length  != 0) { displaySignalsSelect = "visible"; }
+		$selectSignal.css("display",displaySignalsSelect);		
+		// hide send button
+		$("#idBtnSendSignal").css("display","none");		
+	}
+	
+	//---------------------- called when a div item is selected on div viewer ----------------------//
+	selectDeviceOnViewer = function($selectedObject) // $selectedObject : Jquery object wrapping the div Device
+	{
+		changeSelectionOnDiv($selectedObject);
+		$(".tabs-menu a[href='#tab-2']").trigger("click");		
+		$selectDevType.find('option[value="Tous"]').prop('selected',true);   
+		jsonPlan = $viewer.iviewer('getPlan');
+		$selectDevName.find('option').remove();
+		for (var devName in jsonPlan["Objects"]) {$selectDevName.append($('<option>', {value: devName, text : devName }));}
+		
+		deviceName 			= $.selectedDevice.attr("deviceName");
+		$selectDevName.find('option[value="' + deviceName +'"]').prop('selected',true);   
+		$selectDevName.trigger('change'); //trigger a change instead of click		
+	}
+
+	updateDevicePropertyFields = function($device) // $device : Jquery object wrapping the div Device
+	{
+		//--------- positionner les propriétés dans le tab de gauche ----------//		
+		posXPercent = $device.attr('xPercent');
+		posYPercent = $device.attr('yPercent');
+		$("#idInputPosx").val(posXPercent).attr('value',posXPercent);
+		$("#idInputPosy").val(posYPercent).attr('value',posYPercent);
+		$("#idInputDesc").val($device.attr('id')).attr('value',$device.attr('id'));
+		$("#idInputRangePosx").val(posXPercent);
+		$("#idInputRangePosy").val(posYPercent);
+		$("#idInputState").val($device.attr('state') != 0 ? 'ON':'OFF');
+		$idInputDesc.val($device.attr('id') + "\n ip:" + $device.attr('deviceIp'));
+
+		if ($device.attr('state') == 1) 	bgCol = "#d2ff7b";	else	bgCol = "#fdbfa7";		
+		imageUrl = 'url(../img/';
+		if ($device.attr('state') == 0) imageUrl += $device.attr('imageOff'); else imageUrl += $device.attr('imageOn');
+		imageUrl += ')';
+		$("#idInputState").css("background",bgCol);
+		$device.css({background: bgCol + imageUrl,'background-size': '100% 100%'});
+	}
+	
+	changeSelectionOnDiv = function($selected) // $selected : Jquery object wrapping the div Device
+	{
+		if ($.selectedDevice != undefined)	
+		{
+			$.selectedDevice.attr("isSelected","0");
+			$viewer.iviewer('updateDivObject',$.selectedDevice,$.selectedDevice.attr('state'),$.selectedDevice.attr('xPercent'),$.selectedDevice.attr('yPercent'));
+		}
+		$.selectedDevice = $selected;
+		$.selectedDevice.css("border","3px solid green").css("border-radius","10px");
+		$.selectedDevice.attr("isSelected","1");
+		$viewer.iviewer('updateDivObject',$.selectedDevice,$.selectedDevice.attr('state'),$.selectedDevice.attr('xPercent'),$.selectedDevice.attr('yPercent'));
+	}
+	
+	$("#idInputRangePosx").change( function(){console.log("idInputRangePosx changed"); });	
+	$(document).on('input', '#idInputRangePosx', function() { $viewer.iviewer('updateDivObject',$.selectedDevice,$.selectedDevice.attr('state'),$(this).val(),$.selectedDevice.attr('yPercent')); $("#idInputPosx").val($(this).val()); });
+	$(document).on('input', '#idInputRangePosy', function() { $viewer.iviewer('updateDivObject',$.selectedDevice,$.selectedDevice.attr('state'),$.selectedDevice.attr('xPercent'),$(this).val()); $("#idInputPosy").val($(this).val()); });
+	
+	
+	$("#idBtnSendSignal").click(function() {
+		var result = undefined;
+		var xmlhttp = new XMLHttpRequest();
+		
+		var deviceName = 'idDevice_' + $("#idSelectDeviceName option:selected").text();
+		var remoteName = $("#" + deviceName).attr("remote");
+		var signal = $("#idSelectCommandedWith option:selected").text();
+		signal = signal.replace('_ON',''); signal = signal.replace('_OFF',''); signal = signal.replace('_UK1',''); signal = signal.replace('_UK2','');
+		
+		var targetSendUrl = "../php/SendCommand.php?remote=" + remoteName + "&signal="  + signal;
+		
+		xmlhttp.open('GET', targetSendUrl, false);  		// `false` makes the request synchronous
+		// xmlhttp.timeout = 1000; 					// in milliseconds
+		xmlhttp.send(null);
+		console.log("targetSendUrl",targetSendUrl);
+		if (xmlhttp.status === 200)  {console.log("Command has been sent");}
+	});
+	
+	
 });

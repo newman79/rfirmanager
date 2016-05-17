@@ -34,13 +34,15 @@
 	{
 		var touch = event.originalEvent.changedTouches[0];  // changedTouches correspond à tous les Touch, i.e tous les points appuyés en même temps sur une écran tactile
 
+		// Tout ce qui suit = propriété d'un événement de type mouse
 		// pageX, pageY, screenX, screenY, clientX and clientY returns a number which indicates the number of physical "css pixels" a point is from the reference point. The event point is where the user clicked, the reference point is a point in the upper left. These properties return the horizontal and vertical distance from that reference point.
 		// pageX and pageY		: Relative to the top left of the fully rendered content area in the browser. This reference point is below the url bar and back button in the upper left. This point could be anywhere in the browser window and can actually change location if there are embedded scrollable pages embedded within pages and the user moves a scrollbar.
 		// screenX and screenY	: Relative to the top left of the physical screen/monitor, this reference point only moves if you increase or decrease the number of monitors or the monitor resolution.
 		// clientX and clientY	: Relative to the upper left edge of the content area (the viewport) of the browser window. This point does not move even if the user moves a scrollbar from within the browser.
 		
 		return $.extend(event, {				// extend permet de merger dans event les propriétés de event et celles de tous les objets passés dans les paramètres suivants de la fonction
-			type:    mouseEvents[event.type],	// en l'occurence une map de propriétés
+												// en l'occurence une map des propriétés typique des événements de type "mouse"
+			type:    mouseEvents[event.type],	// mousedown, mousemove, mouseup
 			which:   1,
 			pageX:   touch.pageX,
 			pageY:   touch.pageY,
@@ -56,50 +58,34 @@
 		_mouseInit = $.ui.mouse.prototype._mouseInit;	// retourne la propriété _mouseInit de l'objet de base de jQuery.ui.mouse
 
 	// affecte un code appelable à la fonction ._mouseInit. Du coup, on pourra faire mouseProto._mouseInit();
+	
+	//--------------------------------------- Ajoute la gestion des événements tactiles sur les écrans tactiles ------------------------------//
 	mouseProto._mouseInit = function() {  							// equivalent à mouseProto._mouseInit = new function() { ...      Le new est implicite
-		var self = this; // ici this  est mouseProto, donc l'objet prototype (objet de base de mouse $.ui.mouse.prototype). 
+		console.log("mouseProto._mouseInit() called by widget", this.widgetName); // appelé 2 fois : 1 par le iviewer, 1 par le draggable
+		var self = this; // this correspondra à un widget créé dans ce fichier
 		self._touchActive = false;
 
-		this.element.bind( 'touchstart.' + this.widgetName, function(event) {	// bind attache un événement
-			if (gesturesSupport && event.originalEvent.touches.length > 1) { return; }
-			self._touchActive = true;
-			return self._mouseDown(makeMouseEvent(event));
-		})
-
-		var self = this;
 		// these delegates are required to keep context
+		this._mouseDownDelegate = function(event) {	// bind attache un événement
+			$statusConsole = $("#idInputStatus");	$statusConsole.val($statusConsole.val() + "\n iviewer._mouseDownDelegate()  e=" + e);
+			if (gesturesSupport && event.originalEvent.touches.length > 1) 									{ return; }
+			self._touchActive = true;
+			return self._mouseDown(makeMouseEvent(event)); 	// _mouseDown() est par exemple définie dans le widget IViewer ==> elle sera appelée par le code self._mouseDown(makeMouseEvent(event));
+		};
+		
 		this._mouseMoveDelegate = function(event) {
-			if (gesturesSupport && event.originalEvent.touches && event.originalEvent.touches.length > 1) { return; }
-			if (self._touchActive) {
-				return self._mouseMove(makeMouseEvent(event));
-			}
+			if (gesturesSupport && event.originalEvent.touches && event.originalEvent.touches.length > 1) 	{ return; }
+			if (self._touchActive) 																			{ return self._mouseMove(makeMouseEvent(event)); }
 		};
 		this._mouseUpDelegate = function(event) {
-			if (self._touchActive) {
-				self._touchActive = false;
-				return self._mouseUp(makeMouseEvent(event));
-			}
-		};
+			$statusConsole = $("#idInputStatus");	$statusConsole.val($statusConsole.val() + "\n iviewer._mouseUpDelegate()  e=" + e);
+			if (self._touchActive) 																			{ self._touchActive = false;		return self._mouseUp(makeMouseEvent(event)); }
+		}; 													// _mouseUp() est par exemple définie dans le widget IViewer ==> elle sera appelée par le code self._mouseDown(makeMouseEvent(event));
 
-		$(document)
-			.bind('touchmove.'+ this.widgetName, this._mouseMoveDelegate)
-			.bind('touchend.' + this.widgetName, this._mouseUpDelegate);
+		this.element.bind('touchstart.' + this.widgetName	, this._mouseDownDelegate);
+		$(document).bind('touchmove.'+ this.widgetName		, this._mouseMoveDelegate);
+		$(document).bind('touchend.' + this.widgetName		, this._mouseUpDelegate);
 		
-		/*
-		function(ev){
-				console.log("MouseDown" + ev.buttons);
-				console.log(ev);
-				ev.preventDefault();
-		};*/
-				
-			/*
-			this.container.mousedown(function(ev){
-				console.log("MouseDown" + ev.buttons);
-				console.log(ev);
-				if (ev.buttons === 2) {ev.preventDefault();	} // ne marche pas
-			});
-			*/
-			
 		_mouseInit.apply(this);
 	}
 
@@ -156,8 +142,11 @@
 
 	/**************************************************************************************************************************************************************************  */
 	/************************************** Déclaration du widget iviewer *************************************************************  */
+	var iviewerMouseDownIsClick = false;
+	
 	$.widget( "ui.iviewer", $.ui.mouse, {
 		widgetEventPrefix: "iviewer",
+		// Ce sont les options par défaut, elles doivent être surchargées si besoin lors de l'appel du constructeur du iviewer (voir le javascript dans la page php. On surcharge notamment current_plan)
 		options : {
 			/**
 			* start zoom value for image, not used now
@@ -216,10 +205,10 @@
 			* mouse click event
 			* @param object coords mouse coordinates on the image
 			**/
-			onClick: jQuery.noop/*function(evt, coords) {this.processOnClick(evt, coords)}*/,
-			onStartLoad: function() {/*console.log("Start loading image");*/}, 	/** event is fired when image starts to load */			
-			onFinishLoad: null, 											/** event is fired, when image is loaded and initially positioned */			
-			onErrorLoad: null 												/** event is fired when image load error occurs	*/
+			onClick: jQuery.noop		/*function(evt, coords) {this.processOnClick(evt)}*/,
+			onStartLoad: jQuery.noop, 	/** event is fired when image starts to load */			
+			onFinishLoad: null, 		/** event is fired, when image is loaded and initially positioned */			
+			onErrorLoad: null 			/** event is fired when image load error occurs	*/
 		},
 
 		_create: function() {
@@ -253,30 +242,24 @@
 			//init container
 			this.container.css("overflow","hidden");
 
-			if (this.options.update_on_resize == true) {
-				$(window).resize(function() {
-					me.update();
-				});
-			}
+			if (this.options.update_on_resize == true) 
+				$(window).resize(function() {me.update();});			
 
 			this.img_object = new $.ui.iviewer.ImageObject(this.options.zoom_animation, this);
 			this.img_object.setViewer(this);
 
 			if (this.options.mousewheel) {
-				this.container.bind('mousewheel.iviewer', function(ev, delta)
-					{
-						//this event is there instead of containing div, because
-						//at opera it triggers many times on div
-						var zoom = (delta > 0)?1:-1,
-							container_offset = me.container.offset(),
-							mouse_pos = {
+				this.container.bind('mousewheel.iviewer', function(ev, delta) {
+						//this event is there instead of containing div, because at opera it triggers many times on div
+						var zoom = (delta > 0) ? 1 : -1,
+							container_offset = me.container.offset(),	// coordonnées de la div de iviewer dans le document entier
+							mouse_pos = {	// coordonnées de l'événement dans la div ; (pageX,pageY) = coordonnées événements dans document entier
 								x: ev.pageX - container_offset.left,
 								y: ev.pageY - container_offset.top
 							};
-
 						me.zoom_by(zoom, mouse_pos);
 						return false;
-					});
+				});
 
 				if (gesturesSupport) {
 					var gestureThrottle = +new Date();
@@ -303,7 +286,7 @@
 							gestureThrottle = d;
 							var zoom = originalScale * ev.originalEvent.scale;
 							me.set_zoom(zoom, originalCenter);
-							ev.preventDefault();
+							ev.preventDefault(); // preventDefault is used to prevent default action for the target on which event occurs
 						}).bind('gestureend', function(ev) {
 							originalCenter = null;
 						});
@@ -313,31 +296,29 @@
 			//init object
 			this.img_object.object()
 				//bind mouse events
-				.click(function(e){return me._click(e)})
+				.click(function(e){/*console.log("handled_ me(img_object)._click(e);");*/ return me._click(e)})
 					.prependTo(this.container);
 
 			this.container.bind('mousemove', function(ev) { me._handleMouseMove(ev); });
 
-			if(!this.options.ui_disabled)
-			{
-				this.createui();
-			}
+			if(!this.options.ui_disabled) {this.createui();}
 
 			this.loadPlan(this.options.current_planName);
 			
-			this._mouseInit(); // appel de l'initialisation. _mouseinit() est une méthode de jQuery.ui.mouse, mais elle a été surchargée plus haut 
+			this._mouseInit(); // appel de l'initialisation : _mouseinit() est une méthode de jQuery.ui.mouse, mais elle a été surchargée plus haut 
 			
 			this.container.bind("contextmenu", function (event) {
+				
 				event.preventDefault();	// Avoid the real one
-				$("#idUlContextMenu").finish().css("display","inline").css("top",event.pageY+"px").css("left",event.pageX+"px"); // Show contextmenu
+				if (event.target.id != undefined && event.target.id.indexOf("idDevice") != -1)
+					$("#idUlContextMenu").finish().css("display","inline").css("top",event.pageY+"px").css("left",event.pageX+"px"); // Show contextmenu at mouse event coordinates in document
 			});
 			
-			this.onClick=function(evt, coords) {me.processOnClick(evt, coords);}
-			
+			this._on({"click": function(evt, coords) {/*console.log("handled_on('click')");*/ me.processOnClick(evt);} /*, "mouseout": function(evt, coords) {console.log("mouseout",evt, coords);}*/	});			
 		} /************** end of _create override ***********/,
 
 		destroy: function() {
-			$.Widget.prototype.destroy.call( this );
+			$.Widget.prototype.destroy.call(this);
 			this._mouseDestroy();
 			this.img_object.object().remove();
 			this.container.off('.iviewer');
@@ -355,19 +336,41 @@
 			this._updateContainerInfo()
 			this.setCoords(this.img_object.x(), this.img_object.y());
 		},
-
 		
 		/** process OnClick */
-		processOnClick : function(evt, coords) 
-		{
-			console.log("processOnClick:",evt,coords);
+		processOnClick : function(evt)
+		{	
+			/*console.log("handled_processOnClick()");*/
+			targetName = evt.target.nodeName;
+			if (targetName == "DIV" || targetName == "Div" || targetName == "div")	{console.log("processOnClick not in image ==> Not processed");return;}
+			if (evt.eventPhase == 3) return; // en fait la fonction est appelée 2 fois : evt.eventPhase == 2 ==> btn down ? evt.eventPhase == 3 ==> btn up ?
+			
+			clickcoordsInImageX = evt.originalEvent.offsetX;
+			clickcoordsInDivX = clickcoordsInImageX + this.img_object.x();
+			clickcoordsInImageY = evt.originalEvent.offsetY;
+			clickcoordsInDivY = clickcoordsInImageY + this.img_object.y();						
+			distanceMin = 999999;
+			var $selectedObject = undefined;			
+			for (var key in this.allDivObjects) 
+			{
+				var $jobjet = this.allDivObjects[key];
+				var distanceX = clickcoordsInDivX - $jobjet.css("left").replace('px','') - $jobjet.css("width").replace('px','')/2;
+				var distanceY = clickcoordsInDivY - $jobjet.css("top").replace('px','') - $jobjet.css("height").replace('px','')/2;
+				var distance = distanceX * distanceX + distanceY * distanceY;
+				if (distance < distanceMin)	{$selectedObject = $jobjet;		distanceMin = distance;	}
+			}
+			selectDeviceOnViewer($selectedObject);
+			
+			if ($("#idDivSelectAnchor").attr('anchor').replace('px','')==1) { // tente de positionner l'image pour que l'object sélectionné soie au centre de la div iviewer
+				this.dragInOrderToCenter($selectedObject.css("left").replace('px','') + Math.floor($selectedObject.css("width").replace('px','')/2),$selectedObject.css("top").replace('px','') + Math.floor($selectedObject.css("height").replace('px','')/2));
+			}	
 		},	
 		
-		/** Changing background image */
+		/** Going to ith background image : delta = 1 ou -1 */
 		changeBackground : function(delta)
 		{
 			var bgNames = Object.keys(this.options.current_plan["Backgrounds"]);
-			var i=0; for(i=0;i<bgNames.length;i++) if (bgNames[i] == this.options.current_background)	{break;} // find index of current background name
+			var i=0; for(i=0 ; i < bgNames.length ; i++) if (bgNames[i] == this.options.current_background)	{break;} // find index of current background name
 			var newIdx = i + delta;
 			if (newIdx > bgNames.length-1 || newIdx < 0)	return;
 			this.setBackground(bgNames[newIdx]);
@@ -377,53 +380,52 @@
 		{
 			if (backgroundName == undefined) return;
 			this.options.current_background = backgroundName;
-			var urlsrc 			= "../img/" + this.options.current_plan["Backgrounds"][backgroundName];	// charge la 1er image de fond définie dans ce plan
-			//if(!this.options.ui_disabled)
-				$("#idDivSelectedBg").text("<" + this.options.current_background + ">");
+			var urlsrc 			= "../img/" + this.options.current_plan["Backgrounds"][backgroundName].src;	// charge la 1er image de fond définie dans ce plan
+			this.options.current_background_width 	= this.options.current_plan["Backgrounds"][backgroundName].width;
+			this.options.current_background_height 	= this.options.current_plan["Backgrounds"][backgroundName].height;
+			$("#idDivSelectedBg").text("<" + this.options.current_background + ">");
 			
-			this.current_zoom = this.options.zoom;
+			//this.current_zoom = this.options.zoom;
 			var me = this;
 			this._trigger('onStartLoad', 0, urlsrc);
 			this.container.addClass("iviewer_loading");
 			this.img_object.load(urlsrc, function() {me._imageLoaded(urlsrc);}, function() {me._trigger("onErrorLoad", 0, urlsrc);});
-		},
-		/** load a whole plan */
-		loadPlan: function(planName)
-		{
-			if (this.options.current_plan == undefined) return;			
-			// load image
-			this.options.current_plan		= LoadFile('../data/' + planName);
-			this.options.current_background	= Object.keys(this.options.current_plan["Backgrounds"])[0]; 	// récupère la clé du 1er élément de la hashmap $.rfirobjects["Backgrounds"]
-			this.setBackground(this.options.current_background);
-			// load objects
-			
-			//this.container.find($("div[id*='id_elecobject_']"));
-			for (var it in this.allDivObjects)
-				this.allDivObjects[it].remove();
-			
-			//console.log("this.id",);
-			for (var objName in this.options.current_plan["Objects"])
-			{
-				/*console.log("Adding objetct",this.options.current_plan["Objects"][objName]);*/
-				newObject = this.options.current_plan["Objects"][objName];
-				newObjectPos = newObject["position"];
-				this.addDivObject(objName ,newObjectPos.x, newObjectPos.y, 2, 2, newObject["type"], {});				
-			}
 			
 		},
-
+		
 		_imageLoaded: function(src) {
 			this.container.removeClass("iviewer_loading");
 			this.container.addClass("iviewer_cursor");
-
 			if(this.options.zoom == "fit"){this.fit(true);}
 			else {this.set_zoom(this.options.zoom, true);}
 			this._trigger('onFinishLoad', 0, src);
 		},
+		
+		/** load a whole plan */
+		loadPlan: function(planName)
+		{
+			if (this.options.current_plan == undefined) return;			
+			//--------- load image ----------//
+			this.options.current_plan		= LoadFile('../data/' + planName);
+			this.options.current_background	= Object.keys(this.options.current_plan["Backgrounds"])[0]; 	// récupère la clé du 1er élément de la hashmap $.rfirobjects["Backgrounds"]
+			this.setBackground(this.options.current_background);
+			//--------- load objects --------//			
+			//this.container.find($("div[id*='id_elecobject_']"));
+			for (var it in this.allDivObjects)
+				this.allDivObjects[it].remove();
+			
+			for (var objName in this.options.current_plan["Objects"])
+			{
+				newObject = this.options.current_plan["Objects"][objName];
+				if (newObject["position"].x != 0 && newObject["position"].y !=0)
+					this.addDivObject(objName ,newObject["position"].x, newObject["position"].y, 2, 2, newObject["type"], 0, newObject["imageOn"], newObject["imageOff"], {remote:newObject["remote"]});				
+			}
+			
+		},		
+		getPlan: function()	{return this.options.current_plan;},
 
 		/**
 		* fits image in the container
-		*
 		* @param {boolean} skip_animation
 		**/
 		fit: function(skip_animation)
@@ -432,35 +434,31 @@
 			var window_ratio = this.options.width /  this.options.height;
 			var choose_left = (aspect_ratio > window_ratio);
 			var new_zoom = 0;
-
-			if(choose_left){
-				new_zoom = this.options.width / this.img_object.orig_width() * 100; 
-			}
-			else {
-				new_zoom = this.options.height / this.img_object.orig_height() * 100;
-			}
+			// choose_left = mécanisme pour que l'image ne dépasse pas la div en hauteur ou en largeur
+			if(choose_left)		new_zoom = this.options.width / this.img_object.orig_width() * 100; 	
+			else 				new_zoom = this.options.height / this.img_object.orig_height() * 100;
+			
 			// au final, new_zoom correspond au zoom qu'il faut faire de l'image d'origine pour remplir complètement la largeur ou la hauteur du viewer
 		  this.set_zoom(new_zoom, skip_animation);
 		},
 
-		/**
-		* center image in container
-		**/
+		/** center image in container : divWidth/2 = centreDiv ==> divWidth/2 - imgWith/2 = coin gauche de l'image pour qu'elle soient centrée par rapport à centreDiv ; idem pour height **/
 		center: function()
 		{
-			this.setCoords(-Math.round((this.img_object.display_width() - this.options.width)/2),
-					-Math.round((this.img_object.display_height() - this.options.height)/2));
+			this.setCoords(Math.round((this.options.width - this.img_object.display_width())/2),Math.round((this.options.height - this.img_object.display_height())/2));
 		},
 
 		/**
-		*   move a point in container to the center of display area
+		*   move(drag) the image in order to make the given argument selected point in image become the center of display area (div iviewer)
 		*   @param x a point in container
 		*   @param y a point in container
+		*   Faire un dessin pour comprendre : très simple : pour aller du centre au click, il faut se déplacer de dx puis dy (calculé ci-dessous)
+		*	==> pour que le click se retrouve au centre, il translater l'image de -dx et -dy
 		**/
-		moveTo: function(x, y)
+		dragInOrderToCenter: function(x, y)
 		{
-			var dx = x-Math.round(this.options.width/2);
-			var dy = y-Math.round(this.options.height/2);
+			var dx = x - Math.round(this.options.width/2);
+			var dy = y - Math.round(this.options.height/2);
 
 			var new_x = this.img_object.x() - dx;
 			var new_y = this.img_object.y() - dy;
@@ -471,9 +469,7 @@
 		/**
 		 * Get container offset object.
 		 */
-		getContainerOffset: function() {
-			return jQuery.extend({}, this.container.offset());
-		},
+		getContainerOffset: function() {return jQuery.extend({}, this.container.offset());},
 
 		/**
 		* set coordinates of upper left corner of image object
@@ -492,62 +488,35 @@
 		{
 			x = parseInt(x, 10);
 			y = parseInt(y, 10);
-
 			//check new coordinates to be correct (to be in rect)
-			if(y > 0){
-				y = 0;
-			}
-			if(x > 0){
-				x = 0;
-			}
-			if(y + this.img_object.display_height() < this.options.height){
-				y = this.options.height - this.img_object.display_height();
-			}
-			if(x + this.img_object.display_width() < this.options.width){
-				x = this.options.width - this.img_object.display_width();
-			}
-			if(this.img_object.display_width() <= this.options.width){
-				x = (this.options.width - this.img_object.display_width())/2;
-			}
-			if(this.img_object.display_height() <= this.options.height){
-				y = (this.options.height-this.img_object.display_height())/2;
-			}
-
-			return { x: x, y:y };
+			if( y > 0 ) {y = 0;}
+			if( x > 0 ) {x = 0;}
+			if(y + this.img_object.display_height() < this.options.height)	{y = this.options.height - this.img_object.display_height();}
+			if(x + this.img_object.display_width() < this.options.width)	{x = this.options.width - this.img_object.display_width();}
+			if(this.img_object.display_width() <= this.options.width)		{x = (this.options.width - this.img_object.display_width())/2;}
+			if(this.img_object.display_height() <= this.options.height)		{y = (this.options.height-this.img_object.display_height())/2;}
+			return { x : x, y : y };
 		},
-
 
 		/**
 		* convert coordinates on the container to the coordinates on the image (in original size)
-		*
 		* @return object with fields x,y according to coordinates or false
 		* if initial coords are not inside image
 		**/
 		containerToImage : function (x,y)
 		{
-			var coords = { x : x - this.img_object.x(),
-					 y :  y - this.img_object.y()
-			};
-
-			coords = this.img_object.toOriginalCoords(coords);
-
-			return { x :  util.descaleValue(coords.x, this.current_zoom),
-					 y :  util.descaleValue(coords.y, this.current_zoom)
-			};
+			var coords = { x : x - this.img_object.x(),	 y :  y - this.img_object.y()	};
+			coords = this.img_object.toOriginalCoords(coords); 	// convertit (par rotation) les coordonnées coords pour les avoir dans l'image d'origine.
+			return { x :  util.descaleValue(coords.x, this.current_zoom), y :  util.descaleValue(coords.y, this.current_zoom)}; // divise par le zoom courant pour avoir les coordonnées d'origine.
 		},
 
 		/**
 		* convert coordinates on the image (in original size, and zero angle) to the coordinates on the container
-		*
 		* @return object with fields x,y according to coordinates
 		**/
 		imageToContainer : function (x,y)
 		{
-			var coords = {
-					x : util.scaleValue(x, this.current_zoom),
-					y : util.scaleValue(y, this.current_zoom)
-				};
-
+			var coords = {x : util.scaleValue(x, this.current_zoom),y : util.scaleValue(y, this.current_zoom)};
 			return this.img_object.toRealCoords(coords);
 		},
 
@@ -558,11 +527,10 @@
 		* @return object with fields x,y according to coordinates or false
 		* if initial coords are not inside image
 		**/
-		_getMouseCoords : function(e)
+		_getMouseCoordsInImg : function(e)
 		{
-			var containerOffset = this.container.offset();
-				coords = this.containerToImage(e.pageX - containerOffset.left, e.pageY - containerOffset.top);
-
+			var containerOffset = this.container.offset(); // position de la div du iviewer dans le document entier
+			coords = this.containerToImage(e.pageX - containerOffset.left, e.pageY - containerOffset.top);	// coords = coordonnées de l'événement dans l'image
 			return coords;
 		},
 
@@ -574,9 +542,7 @@
 		**/
 		set_zoom: function(new_zoom, skip_animation, zoom_center)
 		{
-			if (this._trigger('onZoom', 0, new_zoom) == false) {
-				return;
-			}
+			if (this._trigger('onZoom', 0, new_zoom) == false) {return;}
 			
 			var bgsize = Math.floor(25 * new_zoom / 100);
 			this.container.css("background-size",bgsize+"px " + bgsize+"px"); // modify checkerboard's tile size
@@ -585,11 +551,10 @@
 			if(!this.img_object.loaded()) { return; }
 
 			// si pas positionné, fixer zoom_center au centre du viewer
-			zoom_center = zoom_center || {
-				x: Math.round(this.options.width/2),
-				y: Math.round(this.options.height/2)
-			}
+			zoom_center = zoom_center 	||		 { x: Math.round(this.options.width/2), 	y: Math.round(this.options.height/2) };
 
+			/* console.log("new_zoom=",new_zoom); */
+			
 			// empecher le zoom de sortir des limites de zoom
 			if(new_zoom <  this.options.zoom_min)		{new_zoom = this.options.zoom_min;}
 			else if(new_zoom > this.options.zoom_max)	{new_zoom = this.options.zoom_max;}
@@ -602,8 +567,8 @@
 				this.current_zoom = 100;
 			}
 			else {
-				var old_x = -this.img_object.x() + zoom_center.x; // old_x = au zoom courant, la distance en pixels en X entre le coté gauche de l'image et zoom_center 
-				var old_y = -this.img_object.y() + zoom_center.y; // old_y = au zoom courant, la distance en pixels en Y entre le coté haut de l'image et zoom_center 
+				var old_x = -this.img_object.x() + zoom_center.x; // old_x = au zoom courant, la distance en pixels en abscisse entre le coté gauche de l'image et zoom_center 
+				var old_y = -this.img_object.y() + zoom_center.y; // old_y = au zoom courant, la distance en pixels en ordonnée entre le coté haut de l'image et zoom_center 
 			}
 
 			var new_width = util.scaleValue(this.img_object.orig_width(), new_zoom);  	// new_width = la largeur en pixel que l'image occupera avec le nouveau zoom
@@ -622,16 +587,11 @@
 			this.img_object.display_width(new_width);
 			this.img_object.display_height(new_height);
 
-			var coords = this._correctCoords( new_x, new_y ),
-				self = this;
-
-			this.img_object.setImageProps(new_width, new_height, coords.x, coords.y,
-											skip_animation, function() {
-				self._trigger('onAfterZoom', 0, new_zoom );
-			});
+			var coords = this._correctCoords(new_x, new_y);
+			self = this;
+			this.img_object.setImageProps(new_width, new_height, coords.x, coords.y, skip_animation, function() {self._trigger('onAfterZoom', 0, new_zoom );});
 			this.current_zoom = new_zoom;
-
-			this.update_status();
+			this.update_scaleAndZoomLabel();
 		},
 
 		/**
@@ -713,15 +673,18 @@
 		},
 
 		/* update scale info in the container */
-		update_status: function()
+		update_scaleAndZoomLabel: function()
 		{
 			if(!this.options.ui_disabled)
 			{
 				var percent = Math.round(100*this.img_object.display_height()/this.img_object.orig_height());
-				if(percent)
-				{
-					this.zoom_object.html(percent + "%");
-				}
+				if(percent) {this.zoom_object.html(percent + "%");} // affichage du zoom
+				
+				// mise à jour de l'échelle
+				var distanceXinDiv = this.options.current_background_width * (this.options.width / this.img_object.display_width()); 	// calcul de la distance en mètres de l'emprise (div iviewer) ; current_background_width contient la distance en metre de toute l'image
+				var distanceXofScaleXBar = (scaleXBarWidth / this.options.width) * distanceXinDiv;										// calcul de la distance en mètres des scaleXBarWidth pixels représentés
+				distanceXofScaleXBar = Math.floor(distanceXofScaleXBar * 100) / 100; // pour tronquer à 2 caractères après la virgule
+				$('#idDivScaleVal').html(distanceXofScaleXBar + "m").val(distanceXofScaleXBar + "m");	// affichage de l'échelle en X
 			}
 		},
 
@@ -763,92 +726,76 @@
 			}
 		},
 
-		/**
-		*   callback for handling mousdown event to start dragging image
-		**/
+		//---- Les fonctions ci-dessous commencent par des '_' ==> ce sont des fonctions privées ; en l'occurrence, elles surchargent les méthodes privées du widget mouse ----//
+		
+		/**  callback for handling mousdown event to start dragging image **/
 		_mouseStart: function( e )
 		{
+			if (this._trigger('onStartDrag', 0, this._getMouseCoordsInImg(e)) === false) {return false;}
 			$.ui.mouse.prototype._mouseStart.call(this, e);
-			if (this._trigger('onStartDrag', 0, this._getMouseCoords(e)) === false) {
-				return false;
-			}
-
 			/* start drag event*/
 			this.container.addClass("iviewer_drag_cursor");
-
-			//#10: fix movement quirks for ipad
-			this._dragInitialized = !(e.originalEvent.changedTouches && e.originalEvent.changedTouches.length==1);
-
-			this.dx = e.pageX - this.img_object.x();
-			this.dy = e.pageY - this.img_object.y();
+			this._dragInitialized = !(e.originalEvent.changedTouches && e.originalEvent.changedTouches.length==1); //un seul point de touche
+			this.dx = e.pageX - this.img_object.x();	// dx = distance en pixel entre le click.x et le coin gauche de l'image
+			this.dy = e.pageY - this.img_object.y();	// dy = idem avec y
 			return true;
 		},
 
-		_mouseCapture: function( e ) {
+		_mouseCapture: function( e ) {return true;},
+				
+		_mouseDown: function(e) {  // Cette fonction est appelée par des handlers des évnéments tactiles. Ils ont été définis plus haut dans la fonction mouseproto._mouseinit()
+			console.log("iviewer._mouseDown()",e);
+			$.ui.mouse.prototype._mouseDown.call(this,e); 	// appel de la methode _mouseDown de la classe mère
+			if (!iviewerMouseDownIsClick) { iviewerMouseDownIsClick = true;	setTimeout(function(){ iviewerMouseDownIsClick = false; }, 300); }
 			return true;
-		},
-
+		},    
 		
-		// _mouseDown:jQuery.noop,    // si on voulait désactiver les événements mouseDown, on décommente ; sinon, on peut aussi surcharger cette fonction ici ou dans le corps de la fonction _mouseInit (plus haut dans le code)
+		_mouseUp: function(e) { 	// Cette fonction est appelée par des handlers des évnéments tactiles. Ils ont été définis plus haut dans la fonction mouseproto._mouseinit()
+			console.log("iviewer._mouseUp()",e);
+			if (iviewerMouseDownIsClick)  {iviewerMouseDownIsClick = false; this.processOnClick(e);}			
+			$.ui.mouse.prototype._mouseUp.call(this,e); 	// appel de la methode _mouseUp de la classe mère
+		},
 		
 		/**
-		 * Handle mouse move if needed. User can avoid using this callback, because
-		 *    he can get the same information through public methods.
+		 * Handle mouse move if needed. User can avoid using this callback, because he can get the same information through public methods.
 		 *  @param {jQuery.Event} e
 		 */
-		_handleMouseMove: function(e) {
-			this._trigger('onMouseMove', e, this._getMouseCoords(e));
-		},
+		_handleMouseMove: function(e) {this._trigger('onMouseMove', e, this._getMouseCoordsInImg(e));}, // onMouseMove est définie dans les options du widget. _trigger ne fait que l'appeler
 
 		/** callback for handling mousemove event to drag image	**/
 		_mouseDrag: function(e)
 		{
+			this._trigger('onDrag', e, this._getMouseCoordsInImg(e));	// La méthode onDrag est définie dans les options lors de la construction du widget iviewer (voir au dessus). _trigger ne fait que l'appeler
 			$.ui.mouse.prototype._mouseDrag.call(this, e);
-
 			//#10: imitate mouseStart, because we can get here without it on iPad for some reason
 			if (!this._dragInitialized) {
-				this.dx = e.pageX - this.img_object.x();
-				this.dy = e.pageY - this.img_object.y();
+				this.dx = e.pageX - this.img_object.x(); 	// dx = distance en pixel entre le click.x et le coin gauche de l'image
+				this.dy = e.pageY - this.img_object.y();	// dy = idem avec y
 				this._dragInitialized = true;
 			}
 
-			var ltop =  e.pageY - this.dy;
+			// Pendant le drag, dx et dy restent constant ==> on obtient les nouvelles coordonnées de l'image en retranchant aux nouvelles coordonnées du click (dx ou dy)
 			var lleft = e.pageX - this.dx;
+			var ltop =  e.pageY - this.dy;
 
 			this.setCoords(lleft, ltop);
-			this._trigger('onDrag', e, this._getMouseCoords(e));
 			return false;
 		},
 
 		/** callback for handling stop drag	**/
 		_mouseStop: function(e)
 		{
+			this._trigger('onStopDrag', 0, this._getMouseCoordsInImg(e)); // La méthode onStopDrag est définie dans les options lors de la construction du widget iviewer (voir au dessus). _trigger ne fait que l'appeler
 			$.ui.mouse.prototype._mouseStop.call(this, e);
 			this.container.removeClass("iviewer_drag_cursor");
-			this._trigger('onStopDrag', 0, this._getMouseCoords(e));
 		},
 
-		_click: function(e)
+		_click: function(e) // function handler initiated on image
 		{	
-			//this._trigger('processOnClick', 0, this._getMouseCoords(e));
-			this.processOnClick(e,this._getMouseCoords(e));
+			this._trigger('onClick', e);   // La méthode onClick est définie dans les options lors de la construction du widget iviewer (voir au dessus). _trigger ne fait que l'appeler
+			this.processOnClick(e);
 		},
 
-		/**
-		*   Try to draw
-		**/
-		_tryToDraw: function()
-		{
-			//alert('_tryToDraw');
-			console.log(new Date().getTime() + '_tryToDraw');
-			console.log(this.img_object);
-			console.log(this.img_object._img[0]);
-			console.log('--------------------');
-			console.log(this.id);
-			console.log(this.container);			
-			this.addDivObject('id_aaaa_'+new Date().getTime(),Math.floor((Math.random() * 100)), Math.floor((Math.random() * 100)),2,2, "S",{pOrigX:100,pOrigY:100,state:"on"});
-		},
-		
 		refreshViewer: function()
 		{
 			this.options.width = this.container.css("width").replace('px','');
@@ -858,38 +805,106 @@
 		
 		allDivObjects:{},
 		
-		/*
-		 * objectType : 433RF Device (commanded emitter or receiver), 433RF Sensor (automatic emitter), IR Device (commanded emitter or receiver), IR Sensor (automatic emitter)
-		 */
-		addDivObject: function (objectname ,xPer, yPer, widthPer, heigthPer, objectType, properties)
+		getAllDivObjects: function () {return allDivObjects;},
+		
+		/* objectType : 433RF Device (commanded emitter or receiver), 433RF Sensor (automatic emitter), IR Device (commanded emitter or receiver), IR Sensor (automatic emitter) */
+		addDivObject: function (objectId ,xPer, yPer, widthPer, heigthPer, objectType, state, imageOnFilePath,imageOffFilePath, properties)
 		{
-			var $newRFOrIRDivObject = $('<div />').appendTo(this.container);
+			var $devDiv = $('<div />').appendTo(this.container);
+			$devDiv.attr('xPercent',xPer);
+			$devDiv.attr('yPercent',yPer);
+			$devDiv.attr('widthPercent',widthPer);
+			$devDiv.attr('heigthPercent',heigthPer);
+			$devDiv.attr('type', objectType).css({ position: "absolute", width:"20px",height:"20px"});
+			$devDiv.attr('deviceName', objectId);
+			$devDiv.attr('id', objectId);
+			$devDiv.attr('state', state);
+			$devDiv.attr('imageOn', imageOnFilePath);
+			$devDiv.attr('imageOff', imageOffFilePath);			
+			$devDiv.click(function(e){selectDeviceOnViewer($(this));});			
 			
-			$newRFOrIRDivObject.attr('xPercent',xPer);
-			$newRFOrIRDivObject.attr('yPercent',yPer);
-			$newRFOrIRDivObject.attr('widthPercent',widthPer);
-			$newRFOrIRDivObject.attr('heigthPercent',heigthPer);
-			var objectId = 'id_elecobject_' + objectname; // new Date().getTime();
-			$newRFOrIRDivObject.attr('id', objectId).css({ position: "absolute"/*, top :"-30px", left: "100px"*/, width:"20px",height:"20px"});
-			//$newRFOrIRDivObject.html(objectType)
 			// absolute : par rapport au parent mais sans considérer les collisions avec les autres fils du parent ==> si on ne change pas top et left et qu'on ajoute des div, elles seront l'une au dessus de l'autre
 			// relative : par rapport au parent mais en évitant d'empiéter sur les autres fils du parent  ==> si on ne change pas top et left et qu'on ajoute des div, elles seront toutes visibles !!
-			/*console.log("Create a new electrical object, $newRFOrIRDivObject");*/			
-			// console.log($newRFOrIRDivObject[0]); // retourne l'élement HTML
-
-			this.allDivObjects[objectId] = $newRFOrIRDivObject;
-			$newRFOrIRDivObject.css({background: 'url(../img/SwitchOn.gif)','background-size': '100% 100%'});
+			// console.log($devDiv[0]); // retourne l'élement HTML
+			var htmlId = 'idDevice_' + objectId;
+			$devDiv.attr('id', htmlId);
 			
-			if (properties !== undefined)
+			var $devCan = $('<canvas>').appendTo(this.container);
+			$devCan.attr('id','idCvs_' + htmlId);
+						
+			this.allDivObjects[htmlId] = $devDiv;
+			if (properties !== undefined) {for (var key in properties) {$devDiv.attr(key,properties[key]);}}
+			this.updateDivObject($devDiv);
+		},
+		
+		updateDivObject: function ($divObject, thestate,xPer, yPer)
+		{
+			if (thestate != undefined)					$divObject.attr('state',thestate);			
+			if (xPer != undefined && yPer != undefined)	$divObject.attr('xPercent',xPer).attr('yPercent',yPer);
+
+			// calcul de la position du device dans la div
+			var widthPercent 	= $divObject.attr('widthPercent');
+			var xPercent	 	= $divObject.attr('xPercent');
+			var objectWidth 	= Math.floor(this.img_object.display_width() * widthPercent / 100);
+			if (objectWidth < 35)	objectWidth = 35;
+			var divX 			= this.img_object.x() + (xPercent * this.img_object.display_width() / 100) - objectWidth/2
+			
+			var heigthPercent 	= $divObject.attr('heigthPercent');
+			var yPercent 		= $divObject.attr('yPercent');
+			var objectHeight 	= Math.floor(this.img_object.display_height() * heigthPercent / 100);
+			if (objectHeight < 35)	objectHeight = 35;
+			var divY 			= this.img_object.y() + (yPercent * this.img_object.display_height() / 100) - objectHeight/2;
+			
+			$divObject.css({left:divX+'px', top:divY+'px', width:objectWidth+'px', height:objectHeight+'px'});
+
+			if ($divObject.attr("isSelected") == 0 || $divObject.attr("isSelected") == undefined)	{$divObject.css("border","none").css("border-radius","10px");;}
+			else $divObject.css("border","1px solid green").css("border-radius","10px");
+
+			if ($divObject.attr("isSelected") == 0 || $divObject.attr("isSelected") == undefined) 
 			{
-				for (var key in properties) 
-				{
-					//console.log('key='+key + ' val='+properties[key]);
-					$newRFOrIRDivObject.attr(key,properties[key]);
-				}			
+				if ($divObject.attr('state') == 1)		bgCol = 'rgba(210,255,123,0.4)';		else		bgCol = 'rgba(253,191,167,0.3)';					
+			}
+			else
+			{
+				if ($divObject.attr('state') == 1) 		bgCol = "#d2ff7b";						else		bgCol = "#fdbfa7";						
 			}
 			
-			this.img_object.replaceDivObjects();
+				
+			imageUrl = 'url(../img/';
+			if ($divObject.attr('state') == 0) imageUrl += $divObject.attr('imageOff'); else imageUrl += $divObject.attr('imageOn');
+			imageUrl += ')';
+			$divObject.css({background: bgCol + " " + imageUrl,'background-size': '100% 100%'});
+									
+			$canvasObject = $('#idCvs_'+$divObject.attr('id'));			
+			$canvasObject.css("position","absolute").css("border","1px solid #888888").css({left:(divX+6)+'px', top:(divY+1+objectHeight)+'px', width:(objectWidth-15)+'px', height:'4px'});
+			$canvasObject.attr("width",objectWidth-15).attr("height","4");						
+
+			if ($divObject.attr("LastStateUpdate") != undefined && isNaN($divObject.attr("LastStateUpdate")) == 0 )	timeoutProgressPct = $divObject.attr("LastStateUpdate") / 60;			
+			else																									timeoutProgressPct = 1;
+			
+			if (timeoutProgressPct > 0.98)
+			{
+				$canvasObject.css("display","none");
+			}
+			else
+			{
+				$canvasObject.css("display","visible");
+				try
+				{
+					var ctx = $canvasObject[0].getContext("2d");
+					if ($canvasObject[0] != undefined)
+					{
+						// calcul de degradé du vert au rouge en fonction du pourcentage
+						red 	= Math.floor( (255-0) * timeoutProgressPct );  		// pour la couche rouge
+						green 	= Math.floor( 255 + (0-255) * timeoutProgressPct ); 	// pour la couche verte
+						blue 	= 0;									// il n'y a pas de 
+						
+						ctx.fillStyle = "rgba(" + red + "," + green + "," + blue + ",0.6)";			
+						ctx.fillRect (1, 1, timeoutProgressPct * (objectWidth-17), 2);							
+					}
+				}
+				catch(e) {/*console.log("Exception with device", $divObject, e); TODO : à corriger, on ne devrait pas arriver là */	}
+			}
 		},
 		
 		/**
@@ -899,47 +914,64 @@
 		{
 			var me=this;
 
-			$("<div>", { 'class': "iviewer_zoom_in iviewer_common iviewer_button"})
-						.bind('mousedown touchstart',function(){me.zoom_by(1); return false;})
-						.appendTo(this.container);
+			$("<div>", { 'class': "iviewer_zoom_in iviewer_common iviewer_button"}).bind('mousedown touchstart',function(){me.zoom_by(1); return false;}).appendTo(this.container);
 
-			$("<div>", { 'class': "iviewer_zoom_out iviewer_common iviewer_button"})
-						.bind('mousedown touchstart',function(){me.zoom_by(- 1); return false;})
-						.appendTo(this.container);
+			$("<div>", { 'class': "iviewer_zoom_out iviewer_common iviewer_button"}).bind('mousedown touchstart',function(){me.zoom_by(-1); return false;}).appendTo(this.container);
 
-			$("<div>", { 'class': "iviewer_zoom_zero iviewer_common iviewer_button"})
-						.bind('mousedown touchstart',function(){me.set_zoom(100); return false;})
-						.appendTo(this.container);
+			$("<div>", { 'class': "iviewer_zoom_zero iviewer_common iviewer_button"}).bind('mousedown touchstart',function(){me.set_zoom(100); return false;}).appendTo(this.container);
 
-			$("<div>", { 'class': "iviewer_zoom_fit iviewer_common iviewer_button"})
-						.bind('mousedown touchstart',function(){me.fit(this); return false;})
-						.appendTo(this.container);
+			$("<div>", { 'class': "iviewer_zoom_fit iviewer_common iviewer_button"}).bind('mousedown touchstart',function(){me.fit(this); return false;}).appendTo(this.container);
 
-			this.zoom_object = $("<div>").addClass("iviewer_zoom_status iviewer_common")
-										.appendTo(this.container);
-/*
-			$("<div>", { 'class': "iviewer_rotate_left iviewer_common iviewer_button"})
-						.bind('mousedown touchstart',function(){me.angle(-90); return false;})
-						.appendTo(this.container);
+			this.zoom_object = $("<div>").addClass("iviewer_zoom_status iviewer_common").appendTo(this.container);
 
-			$("<div>", { 'class': "iviewer_rotate_right iviewer_common iviewer_button" })
-						.bind('mousedown touchstart',function(){me.angle(90); return false;})
-						.appendTo(this.container);
-*/	
+			$("<div>", { 'class': "iviewer_SelectAnchor iviewer_common iviewer_button", 'id':'idDivSelectAnchor'}).attr('anchor',1).bind('mousedown touchstart',function(e){
+				console.log("border",$(this).css('border'));
+				//me._tryToDraw(); return false;
+				newAnchorValue = 3 - $(this).attr('anchor').replace('px','');
+				console.log('newAnchorValue',newAnchorValue);
+				if (newAnchorValue === 2) {$(this).css('backgroundColor','#999999');} else $(this).css('backgroundColor','#eeeeee');
+				$(this).css('border-width',newAnchorValue+'px');
+				$(this).attr('anchor', newAnchorValue);
+				
+			}).appendTo(this.container);
 
+			// Composants graphiques de changement de l'étage dans le plan
 			$divImgBackground = $("<div>", {class: "iviewer_divImgbackground iviewer_common"}	).appendTo(this.container);
 			$("<button>",	{id:'idBtnPrevUp',	text:"", class:"iviewer_divChangeBgImgUp"}		).appendTo($divImgBackground);
 			$("<div>",		{id:'idDivSelectedBg', class:"iviewer_divSelectedBg"}				).appendTo($divImgBackground);
 			$("<button>",	{id:'idBtnPrevDown',text:"", class:"iviewer_divChangeBgImgDown"}	).appendTo($divImgBackground);
-						
+
 			$("#idBtnPrevUp").bind('mousedown touchstart',function(){me.changeBackground(-1); return false;})						
 			$("#idBtnPrevDown").bind('mousedown touchstart',function(){me.changeBackground(1); return false;})						
-					
-			$("<div>", { 'class': "iviewer_tryToDraw iviewer_common iviewer_button" })
-						.bind('mousedown touchstart',function(){me._tryToDraw(); return false;})
-						.appendTo(this.container);
+			
+			// Composants graphiques d'indicateur de l'échelle
+			$canvasScale = $("<canvas>",		{id:'idCanvasScale', class:"iviewer_CanvasScale"}				).appendTo(this.container);
+			$canvasScale.attr("width","80").attr("height","20");
+			var ctx = $canvasScale[0].getContext("2d");			
+			ctx.fillStyle = "rgb(0,0,0)";
+			scaleXBarWidth = 77;
+			ctx.fillRect (0, 10, scaleXBarWidth, 2);		ctx.fillRect (0, 0, 2, 20);			ctx.fillRect (scaleXBarWidth - 2, 0, 2, 20);			
+			$("<div>",		{id:'idDivScaleVal', class:"iviewer_DivScaleVal"}				).appendTo(this.container);
 
-			this.update_status(); //initial status update
+			// Composants graphiques d'affichage des devices nomade
+			$nomadDevicesList = $("<div>",		{id:'idDivNomadsList', class:"flex"}).appendTo(this.container);
+			$nomadDevicesList.css("bottom","190px").css("right","10px").css("z-index","11000").css("font-size","12px").css("background","rgba(180,180,255,0.7)").css("overflow","hidden");
+			$nomadDevicesList.css("display","none");
+			 
+			$nomadDevices = $("<div>",			{id:'idDivNomadsBox', class:"iviewer_divImgbackground iviewer_common"}).appendTo(this.container);
+			$nomadDevices.css("bottom","120px").css("height","60px").css("text-align","center").css("vertical-align","middle");
+			$nomadDevices.mouseover(function () {$nomadDevicesList.css("display","flex");});
+			$nomadDevices.mouseout(function () {$nomadDevicesList.css("display","none");});
+				$nomadDevicesUpDiv 		= $("<div>",		{id:'idDivUpBox'}).appendTo($nomadDevices);
+				$nomadDevicesUpDiv.mouseover(function () {});
+				$nomadDevicesMiddleDiv 		= $("<div>",		{id:'idDivMiddleBox'}).appendTo($nomadDevices);
+				$nomadDevicesMiddleDiv.html("All devices");
+				$nomadDevicesDownDiv 	= $("<div>",		{id:'idDivDownBox'}).appendTo($nomadDevices);
+				$nomadDevicesDownDiv.mouseover(function () {});
+				$nomadDevicesUpDiv.css('top','0px').css("width","100%").css("height","20px")/*.css("background","#eeeeee url(../img/up-icon.png) center center no-repeat")*/;
+				$nomadDevicesDownDiv.css('bottom','0px').css("width","100%").css("height","20px")/*.css("background","#aaaaaa url(../img/down-icon.png) center center no-repeat")*/;
+
+			this.update_scaleAndZoomLabel(); //initial status update
 		}
 	} );
 
@@ -969,41 +1001,15 @@
 	/** @lends $.ui.iviewer.ImageObject.prototype */
 	(function() {
 		
-		this.getViewer = function() {return this.myViewer;};
+		this.getViewer 			= function() {return this.myViewer;};
 		
-		this.setViewer = function(v) {
-			console.log("setViewer");
-			this.myViewer = v;
-		};
+		this.setViewer 			= function(v) {this.myViewer = v;};
 		
 		/** To replace objects in image */
-		this.replaceDivObjects = function() 
-		{
-			var theviewer = this.getViewer();			
-			if (theviewer == undefined) return;
-			for (var key in theviewer.allDivObjects) 
-			{
-				var $jobjet = this.getViewer().allDivObjects[key]; //var $jobjet = $("#id_testDiv");
-				if ($jobjet.get() != undefined)
-				{
-					var widthPercent = $jobjet.attr('widthPercent');
-					var xPercent = $jobjet.attr('xPercent');
-					var widthPixel = Math.floor(this.display_width() * widthPercent / 100);
-					var divX = this._x + (xPercent * this.display_width() / 100) - widthPixel/2 + 'px';
-
-					var heigthPercent = $jobjet.attr('heigthPercent');
-					var yPercent = $jobjet.attr('yPercent');
-					var heightPixel = Math.floor(this.display_height() * heigthPercent / 100);
-					var divY = this._y + (yPercent * this.display_height() / 100) + heightPixel/2 + 'px';
-					
-					$jobjet.css({left:divX, top:divY, width:widthPixel+'px', height:heightPixel+'px'});
-				}
-			}
-		};
+		this.replaceDivObjects 	= function() {if (this.getViewer() != undefined) for (var key in this.getViewer().allDivObjects) {this.getViewer().updateDivObject(this.getViewer().allDivObjects[key]);} };
 		
 		/**
 		 * Restore initial object state.
-		 *
 		 * @param {number} w Image width.
 		 * @param {number} h Image height.
 		 */
@@ -1012,7 +1018,6 @@
 			this._swapDimensions = false;
 			this.x(0);
 			this.y(0);
-
 			this.orig_width(w);
 			this.orig_height(h);
 			this.display_width(w);
@@ -1022,7 +1027,6 @@
 
 		/**
 		 * Check if image is loaded.
-		 *
 		 * @return {boolean}
 		 */
 		this.loaded = function() { return this._loaded; };
@@ -1031,7 +1035,7 @@
 		 * Load image.
 		 *
 		 * @param {string} src Image url.
-		 * @param {Function=} loaded Function will be called on image load.
+		 * @param {Function=} loaded and error functions will be called on image load.
 		 */
 		this.load = function(src, loaded, error) {
 			var self = this;
@@ -1039,34 +1043,25 @@
 			loaded = loaded || jQuery.noop;
 			this._loaded = false;
 
-			//If we assign new image url to the this._img IE9 fires onload event and image width and
-			//height are set to zero. So, we create another image object and load image through it.
-			//var img = new Image();
+			// If we assign new image url to the this._img IE9 fires onload event and image width and height are set to zero. 
+			// So, we create another image object and load image through it.
+			// var img = new Image();
 			
 			this._img[0].onload = function() {
 				self._loaded = true;
-				self._reset(this.width, this.height);
+				self._reset(this.naturalWidth, this.naturalHeight);
 
-				self._img
-					.removeAttr("width")
-					.removeAttr("height")
-					.removeAttr("style")
+				self._img.removeAttr("width").removeAttr("height").removeAttr("style")
 					//max-width is reset, because plugin breaks in the twitter bootstrap otherwise
-					.css({ position: "absolute", top :"0px", left: "0px", maxWidth: "none"})
-
-				//self._img[0].src = src;
-				loaded();
+					.css({ position: "absolute", top :"0px", left: "0px", maxWidth: "none"})					
+					
+				loaded(); // call loaded callback when image is loaded
 			};
 
 			this._img[0].onerror = error;
 
-			//we need this because sometimes internet explorer 8 fires onload event
-			//right after assignment (synchronously)
-			setTimeout(function() {
-				self._img[0].src = src;
-				//img.src = src;
-			}, 0);
-
+			//we need this because sometimes internet explorer 8 fires onload event right after assignment (synchronously)
+			setTimeout(function() {self._img[0].src = src;	/* img.src = src; */}, 0);
 			this.angle(0);
 		};
 
@@ -1074,6 +1069,7 @@
 		// 	  définit 2 fonctions anonymes (le setter function(val) et le getter function()) de la propriété this.'_'<prefix>'_'<name>
 		//    appelle la fonction 'setter' avec ces 2 fonctions anonymes. 'setter' va alors construire et retourner une fonction anonyme () de paramètre 'val' ou rien (wrapper), qui appellera
 		// 	  une de ces 2 fonctions anonymes en fonction de si l'argument val est setté
+		// 	  L'appel de _dimension permettra (voir en dessous) de créer les setter et getter de display_width, display_height, display_diff, orig_width et orig_height
 		this._dimension = function(prefix, name) {
 			var horiz = '_' + prefix + '_' + name,
 				vert = '_' + prefix + '_' + (name === 'height' ? 'width' : 'height');
@@ -1108,14 +1104,13 @@
 		 */
 		this.x = 
 			// setter
-			setter(function(val, skipCss) { 
-				
+			setter(function(val, skipCss) { 				
 				this._x = val;
 				if (!skipCss) {
 					this._finishAnimation();
 					this._img.css("left",this._x + (this._swapDimensions ? this.display_diff() / 2 : 0) + "px");
 				}
-				this.replaceDivObjects();  // relace
+				this.replaceDivObjects();  // replace all the div objects
 			},
 			// getter
 			function() {
@@ -1181,10 +1176,8 @@
 
 		/**
 		 * Map point in the container coordinates to the point in image coordinates.
-		 *     You will get coordinates of point on image with respect to rotation,
-		 *     but will be set as if image was not rotated.
-		 *     So, if image was rotated 90 degrees, it's (0,0) point will be on the
-		 *     top right corner.
+		 *     You will get coordinates of point on image with respect to rotation,  but will be set as if image was not rotated.
+		 *     So, if image was rotated 90 degrees, it's (0,0) point will be on the top right corner.
 		 *
 		 * @param {{x: number, y: number}} point Point in container coordinates.
 		 * @return  {{x: number, y: number}}
@@ -1296,23 +1289,14 @@
 		};
 
 		//if we set image coordinates we need to be sure that no animation is active atm
-		this._finishAnimation = function() {
-		  this._img.stop(true, true);
-		}
+		this._finishAnimation = function() { this._img.stop(true, true); }
+		
 	}).apply($.ui.iviewer.ImageObject.prototype);
-
 
 	/**************************************************************************** Mini API ***************************************************************************************************/
 	var util = {
-		scaleValue: function(value, toZoom)
-		{
-			return value * toZoom / 100;
-		},
-
-		descaleValue: function(value, fromZoom)
-		{
-			return value * 100 / fromZoom;
-		}
+		scaleValue: function(value, toZoom)			{	return value * toZoom / 100; },
+		descaleValue: function(value, fromZoom)		{	return value * 100 / fromZoom; }
 	};
 
  } )( jQuery, undefined );

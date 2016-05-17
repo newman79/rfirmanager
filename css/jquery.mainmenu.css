@@ -12,7 +12,7 @@ margin:0px;
 	/*display:inline-block;*/
 	padding: 0px;
 	margin:0px;
-	width:420px;
+	width:360px;
 	height:100%;
 	float: left;
 	position: absolute;
@@ -49,7 +49,8 @@ margin:0px;
     height: 30px;
     line-height: 30px;
     float: top; 
-    margin-right: 10px;
+    margin-left: 1px;
+    margin-right: 1px;
     background-color: #a8d7ff;
     background-color: #a8d7ff;
     border-top	: 1px solid #d4d4d1;
@@ -64,7 +65,7 @@ margin:0px;
 }
 
 .tabs-menu li a {
-    padding: 3px;
+    padding: 2px;
     text-transform: uppercase;
     color: #fff;
     text-decoration: none; 

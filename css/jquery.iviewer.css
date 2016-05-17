@@ -4,7 +4,7 @@
 	/*float: left;*/
 	position: absolute;
     /*width: 800px;*/
-	left:428px;
+	left:368px;
     height: 100%;
 	right:0px;
     /*overflow: fill;*/
@@ -47,7 +47,7 @@
 
 .iviewer_common {
     position:absolute;
-    bottom:10px;
+    bottom:5px;
     border: 1px  solid #4d91b7;	
 	border-radius:5px;
     height: 32px;
@@ -110,9 +110,30 @@
     background: #fff url(../img/iviewer.rotate_right.png) center center no-repeat;
 }
 
-.iviewer_tryToDraw {
+.iviewer_SelectAnchor {
     left: 300px;
-    background: #fff center center no-repeat;
+	border-width:1px;
+	background: #fff url(../img/iviewer.selectanchor.png) center center no-repeat;
+	background-size: cover;
+	background-Color:#eeeeee;
+}
+
+.iviewer_DivScaleVal {
+	position:absolute;
+    right: 35px;
+	height:20px;
+	width:40px;
+	bottom: 93px;
+	/*background: #fff center center no-repeat;*/
+}
+
+.iviewer_CanvasScale{
+	position:absolute;
+    right: 10px;
+	height:20px;
+	width:80px;
+	bottom: 85px;
+    /*background: #fff center center no-repeat;*/
 }
 
 .iviewer_divImgbackground{
@@ -149,6 +170,25 @@
 	color:#4d91b7;
 }
 
+.flex
+   {
+	  position:absolute;
+      /* style basique */
+      width: 800px;
+      height: 320px;
+      border: 1px solid #555;
+      font: 1em Arial;
+
+      /* instaure la flexbox */
+      display: -webkit-flex;
+      -webkit-flex-direction: column;
+
+	  flex-wrap: wrap;
+      display: flex;
+      flex-direction: column;
+}
+
+
 /*----------------------------------------------------------------------------------------------------------------------------------------*/
 /*                                                       CUSTOM MENU (Right click (context menu))                                         */
 /*----------------------------------------------------------------------------------------------------------------------------------------*/
@@ -156,7 +196,7 @@
 .cCustomMenu {
     display: none;
     z-index: 5000;
-	width:100px;
+	width:120px;
     position: absolute;
     overflow: hidden;
     border: 1px solid #CCC;

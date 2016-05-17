@@ -1,111 +1,313 @@
 {
 	"Backgrounds"			:
 	{
-		"Etage1"	:"../img/Plan_21rueVictorHugo_2eEtage_877_746.jpg",
-		"Etage2"	:"../img/Plan_21rueVictorHugo_2eEtage_877_746.jpg"
+		"Etage1"	:{"src":"../img/Plan_21rueVictorHugo_2eEtage_877_746.gif","width":13, "height":11},
+		"Etage2"	:{"src":"../img/Plan_21rueVictorHugo_2eEtage_500_400.jpg","width":13, "height":11}
 	},
 	"Objects"				:
 	{
-		"LumiereSalon_Salon":
-		{
-			"type"				: "Light",
-			"remote"			: "remote_switch_dio_by_chacon_salon_entree,remote_switch_dio_by_chacon_salon_couloir",
-			"desc"				: "Lumière Salon",
-			"position"			: {"x":51.2,"y":20.5},
-			"current_state"		: "",
-			"signalsTOstate"	: 
-			{
-				"remote_switch_dio_by_chacon_salon_couloir.ON1"		:	"ON",
-				"remote_switch_dio_by_chacon_salon_couloir.OFF1"	:	"OFF",
-				"remote_switch_dio_by_chacon_salon_entree.ON1"		:	"ON",
-				"remote_switch_dio_by_chacon_salon_entree.OFF1"		:	"OFF"
-			},
-			"InBackground":["Etage1"]
-		},
-		"RFPowerPlug1_Chacon_NAS":
+		"RFPowerPlug_Purificateur":
 		{
 			"type"				: "RFPowerPlug",
-			"remote"			: "remote_radiocommanded_chacon",
-			"desc"				: "Prise NAS",
-			"position"			: {"x":42,"y":42},
-			"current_state"		: "",
-			"signalsTOstate"	: 
-			{
-				"remote_radiocommanded_chacon.GROUPS_I_BTN1_ON":"ON"  ,"remote_radiocommanded_chacon.GROUPS_I_BTN1_OFF":"OFF"  ,
-				"remote_radiocommanded_chacon.GROUPS_II_BTN1_ON":"ON" ,"remote_radiocommanded_chacon.GROUPS_II_BTN1_OFF":"OFF" ,
-				"remote_radiocommanded_chacon.GROUPS_III_BTN1_ON":"ON","remote_radiocommanded_chacon.GROUPS_III_BTN1_OFF":"OFF",
-				"remote_radiocommanded_chacon.GROUPS_IV_BTN1_ON":"ON" ,"remote_radiocommanded_chacon.GROUPS_IV_BTN1_OFF":"OFF" 
-			}
-			,
-			"InBackground":["Etage1"]
-		},
-		"RFPowerPlug2_Chacon_Purificateur":
-		{
-			"type"				: "RFPowerPlug",
-			"remote"			: "remote_radiocommanded_chacon",
+			"imageOn"			: "DeviceON_Purificateur_Anim.gif",
+			"imageOff"			: "DeviceOFF_Purificateur.gif",
+			"remote"			: "remote_rfcommand_chacon",
 			"desc"				: "Prise purificateur salon",
-			"position"			: {"x":32,"y":7},
+			"position"			: {"x":37,"y":5},
 			"current_state"		: "",
 			"signalsTOstate"	: 
 			{
-				"remote_radiocommanded_chacon.GROUPS_I_BTN2_ON":"ON"  ,"remote_radiocommanded_chacon.GROUPS_I_BTN2_OFF":"OFF"  ,
-				"remote_radiocommanded_chacon.GROUPS_II_BTN2_ON":"ON" ,"remote_radiocommanded_chacon.GROUPS_II_BTN2_OFF":"OFF" ,
-				"remote_radiocommanded_chacon.GROUPS_III_BTN2_ON":"ON","remote_radiocommanded_chacon.GROUPS_III_BTN2_OFF":"OFF",
-				"remote_radiocommanded_chacon.GROUPS_IV_BTN2_ON":"ON" ,"remote_radiocommanded_chacon.GROUPS_IV_BTN2_OFF":"OFF" 
+				"remote_rfcommand_chacon.GROUPS_1_BTN2_ON":"ON1" 	,"remote_rfcommand_chacon.GROUPS_2_BTN2_ON":"ON2" 	 ,"remote_rfcommand_chacon.GROUPS_3_BTN2_ON":"ON3"  ,"remote_rfcommand_chacon.GROUPS_4_BTN2_ON":"ON4" ,
+				"remote_rfcommand_chacon.GROUPS_1_BTN2_OFF":"OFF1"  ,"remote_rfcommand_chacon.GROUPS_2_BTN2_OFF":"OFF2" ,"remote_rfcommand_chacon.GROUPS_3_BTN2_OFF":"OFF3","remote_rfcommand_chacon.GROUPS_4_BTN2_OFF":"OFF4" 
 			}
 			,
 			"InBackground":["Etage1"]
 		},
-		"RFPowerPlug3_Chacon_RadiateurCouloir":
+		"RFPowerPlug_RadiateurCouloir":
 		{
 			"type"				: "RFPowerPlug",
-			"remote"			: "remote_radiocommanded_chacon",
+			"imageOn"			: "DeviceON_Switch.gif",
+			"imageOff"			: "DeviceOFF_Switch.gif",
+			"remote"			: "remote_rfcommand_chacon",
 			"desc"				: "Prise radiateur couloir",
 			"position"			: {"x":37,"y":58},
 			"current_state"		: "",
 			"signalsTOstate"	: 
 			{
-				"remote_radiocommanded_chacon.GROUPS_I_BTN3_ON":"ON"  ,"remote_radiocommanded_chacon.GROUPS_I_BTN3_OFF":"OFF"  ,
-				"remote_radiocommanded_chacon.GROUPS_II_BTN3_ON":"ON" ,"remote_radiocommanded_chacon.GROUPS_II_BTN3_OFF":"OFF" ,
-				"remote_radiocommanded_chacon.GROUPS_III_BTN3_ON":"ON","remote_radiocommanded_chacon.GROUPS_III_BTN3_OFF":"OFF",
-				"remote_radiocommanded_chacon.GROUPS_IV_BTN3_ON":"ON" ,"remote_radiocommanded_chacon.GROUPS_IV_BTN3_OFF":"OFF" 
+				"remote_rfcommand_chacon.GROUPS_1_BTN3_ON":"ON1"  ,	"remote_rfcommand_chacon.GROUPS_2_BTN3_ON":"ON2" , "remote_rfcommand_chacon.GROUPS_3_BTN3_ON":"ON3"  ,"remote_rfcommand_chacon.GROUPS_4_BTN3_ON":"ON4",
+				"remote_rfcommand_chacon.GROUPS_1_BTN3_OFF":"OFF1","remote_rfcommand_chacon.GROUPS_2_BTN3_OFF":"OFF2", "remote_rfcommand_chacon.GROUPS_3_BTN3_OFF":"OFF3","remote_rfcommand_chacon.GROUPS_4_BTN3_OFF":"OFF4" 
 			}
 			,
 			"InBackground":["Etage1"]
 		},
-		"RFPowerPlug4_Chacon_OrdinateurFixe":
+		
+		
+		"CAM_XMSCAM":
+		{
+			"type"				: "PC",
+			"imageOn"			: "DeviceON_Camera.gif",
+			"imageOff"			: "DeviceOFF_Camera.gif",
+			"remote"			: "NoOne",
+			"desc"				: "Prise PC fixe",
+			"position"			: {"x":32,"y":4},
+			"current_state"		: "",
+			"macAdress"			: "c0:99:6d:19:c4:d8",
+			"signalsTOstate"	: {},
+			"InBackground":["Etage1"]
+		},
+		
+		
+		"PC_NASDlink":
 		{
 			"type"				: "RFPowerPlug",
-			"remote"			: "remote_radiocommanded_chacon",
-			"desc"				: "Prise PC fixe",
-			"position"			: {"x":29,"y":17},
+			"imageOn"			: "DeviceON_PC_Anim.gif",
+			"imageOff"			: "DeviceOFF_PC.gif",
+			"remote"			: "remote_rfcommand_chacon",
+			"desc"				: "Prise NAS",
+			"position"			: {"x":44,"y":44},
 			"current_state"		: "",
+			"macAdress"			: "fc:75:16:00:c3:c7",
 			"signalsTOstate"	: 
 			{
-				"remote_radiocommanded_chacon.GROUPS_I_BTN4_ON":"ON"  ,"remote_radiocommanded_chacon.GROUPS_I_BTN4_OFF":"OFF",		
-				"remote_radiocommanded_chacon.GROUPS_II_BTN4_ON":"ON" ,"remote_radiocommanded_chacon.GROUPS_II_BTN4_OFF":"OFF",
-				"remote_radiocommanded_chacon.GROUPS_III_BTN4_ON":"ON","remote_radiocommanded_chacon.GROUPS_III_BTN4_OFF":"OFF",
-				"remote_radiocommanded_chacon.GROUPS_IV_BTN4_ON":"ON" ,"remote_radiocommanded_chacon.GROUPS_IV_BTN4_OFF":"OFF"
+				"remote_rfcommand_chacon.GROUPS_1_BTN1_ON":"ON1"  ,  "remote_rfcommand_chacon.GROUPS_2_BTN1_ON":"ON2"   ,"remote_rfcommand_chacon.GROUPS_3_BTN1_ON":"ON3"  ,"remote_rfcommand_chacon.GROUPS_4_BTN1_ON":"ON4" ,
+				"remote_rfcommand_chacon.GROUPS_1_BTN1_OFF":"OFF1",  "remote_rfcommand_chacon.GROUPS_2_BTN1_OFF":"OFF2" ,"remote_rfcommand_chacon.GROUPS_3_BTN1_OFF":"OFF3","remote_rfcommand_chacon.GROUPS_4_BTN1_OFF":"OFF4"
 			}
 			,
 			"InBackground":["Etage1"]
 		},
-		"RFSwitch5_Funry3btn":
+
+		"PC_RaspberryPi":
 		{
-			"type"				: "RFSwitch",
-			"remote"			: "remote_switch_funry_3btn_1",
-			"desc"				: "Interrupteur Grande Chambre",
-			"position"			: {"x":22,"y":61},
+			"type"				: "PC",
+			"imageOn"			: "DeviceON_PC_Anim.gif",
+			"imageOff"			: "DeviceOFF_PC.gif",
+			"remote"			: "",
+			"desc"				: "Prise NAS",
+			"position"			: {"x":33,"y":12},
 			"current_state"		: "",
+			"macAdress"			: "b8:27:eb:ab:b5:99",
+			"signalsTOstate"	: {}
+			,
+			"InBackground":["Etage1"]
+		},
+		
+		"PC_Freebox":
+		{
+			"type"				: "PC",
+			"imageOn"			: "DeviceON_FAIBOX_Anim.gif",
+			"imageOff"			: "DeviceOFF_FAIBOX.gif",
+			"remote"			: "NoOne",
+			"desc"				: "Prise PC fixe",
+			"position"			: {"x":92,"y":37},
+			"current_state"		: "",
+			"macAdress"			: "00:07:cb:07:15:d6",
+			"signalsTOstate"	: {},
+			"InBackground":["Etage1"]
+		},
+		
+		"PC_XmsPrinter":
+		{
+			"type"				: "PC",
+			"imageOn"			: "DeviceON_Printer_Anim.gif",
+			"imageOff"			: "DeviceOFF_Printer.gif",
+			"remote"			: "NoOne",
+			"desc"				: "Imprimante wifi",
+			"position"			: {"x":33,"y":20},
+			"current_state"		: "",
+			"macAdress"			: "00:20:00:19:1e:45",
+			"signalsTOstate"	: {},
+			"InBackground":["Etage1"]
+		},
+
+		"PC_XmsFixe":
+		{
+			"type"				: "PC",
+			"imageOn"			: "DeviceON_PC_Anim.gif",
+			"imageOff"			: "DeviceOFF_PC.gif",
+			"remote"			: "NoOne",
+			"desc"				: "Prise PC fixe",
+			"position"			: {"x":27,"y":17},
+			"current_state"		: "",
+			"macAdress"			: "1c:6f:65:20:dc:7d",
+			"signalsTOstate"	: {},
+			"InBackground":["Etage1"]
+		},
+		
+		"PC_XmsPortable":
+		{
+			"type"				: "Nomade.PC",
+			"remote"			: "NoOne",
+			"current_state"		: "",
+			"macAdress"			: "00:24:be:bc:18:be",
+			"position"			: {"x":0,"y":0},
+			"signalsTOstate"	: {},
+			"InBackground":["Etage1"]
+		},
+		"PC_XmsUltra":
+		{
+			"type"				: "Nomade.PC",
+			"remote"			: "NoOne",
+			"current_state"		: "",
+			"macAdress"			: ["20:6a:8a:19:b8:92","18:f4:6a:16:7e:8e"],			
+			"position"			: {"x":0,"y":0},
+			"signalsTOstate"	: {},
+			"InBackground":["Etage1"]
+		},
+			
+		"PC_XmsMus":
+		{
+			"type"				: "PC",
+			"imageOn"			: "DeviceON_PC_Anim.gif",
+			"imageOff"			: "DeviceOFF_PC.gif",
+			"remote"			: "NoOne",
+			"desc"				: "Prise PC fixe",
+			"position"			: {"x":31,"y":94},
+			"current_state"		: "",
+			"macAdress"			: "fc:aa:14:91:33:66",
+			"signalsTOstate"	: {},
+			"InBackground":["Etage1"]
+		},
+		
+		"Phone_OPOXavier":
+		{
+			"type"				: "Phone",
+			"desc"				: "Android",
+			"position"			: {"x":0,"y":0},
+			"macAdress"			: "c0:ee:fb:01:b1:77",
+			"current_state"		: "",
+			"signalsTOstate"	: {},
+			"InBackground":["Etage1"]
+		},
+		"Phone_IphoneAlexandrine":
+		{
+			"type"				: "Phone",
+			"desc"				: "Iphone",
+			"position"			: {"x":0,"y":0},
+			"macAdress"			: "00:23:df:36:99:a9",
+			"current_state"		: "",
+			"signalsTOstate"	: {},
+			"InBackground":["Etage1"]
+		},
+		"Phone_AndroidAlexandrine":
+		{
+			"type"				: "Phone",
+			"desc"				: "Android",
+			"position"			: {"x":0,"y":0},
+			"macAdress"			: "38:40:58:78:38:f9",
+			"current_state"		: "",
+			"signalsTOstate"	: {},
+			"InBackground":["Etage1"]
+		},
+		"Phone_IphoneDaniel":
+		{
+			"type"				: "Phone",
+			"desc"				: "Android",
+			"position"			: {"x":0,"y":0},
+			"macAdress"			: "dc:2b:61:9b:2f:e8",
+			"current_state"		: "",
+			"signalsTOstate"	: {},
+			"InBackground":["Etage1"]
+		},
+		
+		"RFLight_Salon":
+		{
+			"type"				: "RFLight",
+			"imageOn"			: "DeviceON_LIGHT_Anim.gif",
+			"imageOff"			: "DeviceOFF_LIGHT.gif",
+			"remote"			: "remote_switch_dio_by_chacon_salon_entree",
+			"desc"				: "Lumière Salon",
+			"position"			: {"x":51.2,"y":20.5},
+			"current_state"		: "",
+			"macAdress"			: "6c:19:8f:b7:41:f1",
 			"signalsTOstate"	: 
 			{
-				"remote_radiocommanded_chacon.BTN_A":"UNKNOWN",
-				"remote_radiocommanded_chacon.BTN_B":"ON",
-				"remote_radiocommanded_chacon.BTN_C":"UNKNOWN",
-				"remote_radiocommanded_chacon.BTN_D":"OFF"
+				"remote_switch_dio_chacon_salon_couloir.ON1"	:	"ON1",
+				"remote_switch_dio_chacon_salon_entree.ON2"		:	"ON2",
+				"remote_switch_dio_chacon_salon_couloir.OFF1"	:	"OFF1",
+				"remote_switch_dio_chacon_salon_entree.OFF2"	:	"OFF2"
+			},
+			"InBackground":["Etage1"]
+		},
+		
+		"RFLight_Chambre1":
+		{
+			"type"				: "RFSwitch",
+			"imageOn"			: "DeviceON_LIGHT_Anim.gif",
+			"imageOff"			: "DeviceOFF_LIGHT.gif",
+			"remote"			: "remote_switch_funry_onebtn_2",
+			"desc"				: "Interrupteur Grande Chambre",
+			"position"			: {"x":25,"y":30},
+			"current_state"		: "",
+			"macAdress"			: "6c:19:8f:b7:42:0b",
+			"signalsTOstate"	: 
+			{
+				"remote_switch_funry_3btn.BTN_A_ON":"ON",
+				"remote_switch_funry_3btn.BTN_C_OFF":"OFF",
+				"remote_switch_funry_3btn.BTN_B_UK1":"UNKNOWN1",
+				"remote_switch_funry_3btn.BTN_D_UK2":"UNKNOWN2"
 			}
 			,
 			"InBackground":["Etage1"]
+		},
+		
+		"RFLight_Chambre2":
+		{
+			"type"				: "RFSwitch",
+			"imageOn"			: "DeviceON_LIGHT_Anim.gif",
+			"imageOff"			: "DeviceOFF_LIGHT.gif",
+			"remote"			: "remote_switch_funry_onebtn_3",
+			"desc"				: "Interrupteur Grande Chambre",
+			"position"			: {"x":28,"y":64},
+			"current_state"		: "",
+			"macAdress"			: "6c:19:8f:b7:42:37",
+			"signalsTOstate"	: 
+			{
+				"remote_switch_funry_3btn.BTN_A_ON":"ON",
+				"remote_switch_funry_3btn.BTN_C_OFF":"OFF",
+				"remote_switch_funry_3btn.BTN_B_UK1":"UNKNOWN1",
+				"remote_switch_funry_3btn.BTN_D_UK2":"UNKNOWN2"
+			}
+			,
+			"InBackground":["Etage1"]
+		},
+		
+		"TV_Salon":
+		{
+			"type"				: "TV",
+			"imageOn"			: "DeviceON_TV_Anim.gif",
+			"imageOff"			: "DeviceOFF_TV.gif",
+			"desc"				: "Interrupteur Grande Chambre",
+			"position"			: {"x":66,"y":6},
+			"macAdress"			: "78:bd:bc:21:d1:0b",
+			"current_state"		: "",
+			"signalsTOstate"	: {},
+			"InBackground":["Etage1"]
+		},
+		"PC_DecodeurTV":
+		{
+			"type"				: "PC",
+			"imageOn"			: "DeviceON_BOXPlayer_Anim.gif",
+			"imageOff"			: "DeviceOFF_BOXPlayer.gif",
+			"desc"				: "Decodeur TV freebox",
+			"position"			: {"x":70,"y":12},
+			"macAdress"			: "14:0c:76:4e:31:9f",
+			"current_state"		: "",
+			"signalsTOstate"	: {},
+			"InBackground":["Etage1"]
+		},
+		
+		"TV_Chambre1":
+		{
+			"type"				: "TV",
+			"imageOn"			: "DeviceON_TV_Anim.gif",
+			"imageOff"			: "DeviceOFF_TV.gif",
+			"desc"				: "Interrupteur Grande Chambre",
+			"position"			: {"x":3,"y":30},
+			"macAdress"			: "e4:7c:f9:33:5b:1b",
+			"current_state"		: "",
+			"signalsTOstate"	: {},
+			"InBackground":["Etage1"]
 		}
+
 	}
 }
