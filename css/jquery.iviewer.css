@@ -196,7 +196,7 @@
 .cCustomMenu {
     display: none;
     z-index: 5000;
-	width:120px;
+	width:220px;
     position: absolute;
     overflow: hidden;
     border: 1px solid #CCC;

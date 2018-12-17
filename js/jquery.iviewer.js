@@ -311,12 +311,73 @@
 				
 				event.preventDefault();	// Avoid the real one
 				if (event.target.id != undefined && event.target.id.indexOf("idDevice") != -1)
+				{
+					$("#idUlContextMenu").attr('selectedObjectId',event.target.id);
 					$("#idUlContextMenu").finish().css("display","inline").css("top",event.pageY+"px").css("left",event.pageX+"px"); // Show contextmenu at mouse event coordinates in document
+					objectName = event.target.id.replace('idDevice_','');
+					jsonPlan = me.options.current_plan; //$viewer.iviewer('getPlan');
+					$("li[id^=idLiContextMenuCustom]").each(function() { $(this).remove(); });
+					cpt = 0					
+					for (var signal in jsonPlan["Objects"][objectName]["signalsTOstate"])	
+					{
+						signalSecondPart = signal.split(".")[1];
+						liStr = "<li id='idLiContextMenuCustom" + cpt + "'data-action='call_" + signal + "'>"+signalSecondPart+"</li>";
+						$newLi = $(liStr);
+						$newLi.insertBefore($("#idDivContextMenuFirstSeparator")); // insérer un élement li juste apres la div libelle de la div contextmenu
+						if (signalSecondPart.indexOf('ON') > -1)		$newLi.css('color','green');
+						else if (signalSecondPart.indexOf('OFF') > -1)	$newLi.css('color','red');
+						else 											$newLi.css('color','orange');												
+						$newLi.click(me.onclick_contextmenuli);						
+						cpt++;
+					}
+					
+					$.each(event.target.attributes, function() {
+						if(this.name.match("^shutdownmethod_.*$")) {
+							valStr = "OFF_" + this.name.replace("shutdownmethod_","");
+							liStr = "<li id='idLiContextMenuCustom" + cpt + "'data-action='call_" + valStr + "'>"+valStr+"</li>";
+							$newLi = $(liStr).css('color','red');
+							$newLi.insertBefore($("#idDivContextMenuFirstSeparator")); // insérer un élement li juste apres la div libelle de la div contextmenu
+							$newLi.click(me.onclick_contextmenuli);													
+							cpt++;
+						}
+					});
+					
+					$("#idLiContextMenuEdit").unbind("click").click(me.onclick_contextmenuli);
+					$("#idLiContextMenuCancel").unbind("click").click(me.onclick_contextmenuli);
+					
+					$("li").each(function() { $(this).css("font-size","10px").hover( function() { $(this).css("background-color","#BBBBBB;")}, function() { $(this).css("background-color","white")}); });					
+				}
 			});
 			
 			this._on({"click": function(evt, coords) {/*console.log("handled_on('click')");*/ me.processOnClick(evt);} /*, "mouseout": function(evt, coords) {console.log("mouseout",evt, coords);}*/	});			
 		} /************** end of _create override ***********/,
 
+		onclick_contextmenuli: function(event)
+		{
+			var itemStr = $(this).attr("data-action");
+								
+			// This is the triggered action name
+			switch(itemStr) 
+			{
+				case "callEditSelectedObject":
+					console.log("Quit context menu and have to edit selected object");
+					selected = $("#"+$("#idUlContextMenu").attr('selectedObjectId'));					
+					selectDeviceOnViewer(selected);
+					break;
+				case "callCancel":
+					console.log("Quit context menu with nothing to do");
+					break;
+				default:
+					itemStr = itemStr.replace("call_","");
+					itemStrSplitted = itemStr.split(".");
+					remoteName = itemStrSplitted[0];
+					signal = itemStrSplitted[1];
+					signal = signal.replace(/^(.*)_.[^_]*/,"$1")
+					$.sendCommand(remoteName,signal);
+			}
+			$("#idUlContextMenu").hide(100); // Hide it AFTER the action was triggered
+		},
+			
 		destroy: function() {
 			$.Widget.prototype.destroy.call(this);
 			this._mouseDestroy();
@@ -340,7 +401,7 @@
 		/** process OnClick */
 		processOnClick : function(evt)
 		{	
-			/*console.log("handled_processOnClick()");*/
+			console.log("handled_processOnClick()");
 			targetName = evt.target.nodeName;
 			if (targetName == "DIV" || targetName == "Div" || targetName == "div")	{console.log("processOnClick not in image ==> Not processed");return;}
 			if (evt.eventPhase == 3) return; // en fait la fonction est appelée 2 fois : evt.eventPhase == 2 ==> btn down ? evt.eventPhase == 3 ==> btn up ?
@@ -744,14 +805,14 @@
 		_mouseCapture: function( e ) {return true;},
 				
 		_mouseDown: function(e) {  // Cette fonction est appelée par des handlers des évnéments tactiles. Ils ont été définis plus haut dans la fonction mouseproto._mouseinit()
-			console.log("iviewer._mouseDown()",e);
+			console.log("iviewer._mouseDown()"/*,e*/);
 			$.ui.mouse.prototype._mouseDown.call(this,e); 	// appel de la methode _mouseDown de la classe mère
 			if (!iviewerMouseDownIsClick) { iviewerMouseDownIsClick = true;	setTimeout(function(){ iviewerMouseDownIsClick = false; }, 300); }
 			return true;
 		},    
 		
 		_mouseUp: function(e) { 	// Cette fonction est appelée par des handlers des évnéments tactiles. Ils ont été définis plus haut dans la fonction mouseproto._mouseinit()
-			console.log("iviewer._mouseUp()",e);
+			console.log("iviewer._mouseUp()"/*,e*/);
 			if (iviewerMouseDownIsClick)  {iviewerMouseDownIsClick = false; this.processOnClick(e);}			
 			$.ui.mouse.prototype._mouseUp.call(this,e); 	// appel de la methode _mouseUp de la classe mère
 		},

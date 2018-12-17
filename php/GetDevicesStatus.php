@@ -25,7 +25,7 @@
 			{
 			  if (!in_array($value,array(".","..")))
 			  {
-				 if (is_dir($dir . DIRECTORY_SEPARATOR . $value))  	{ $result[$value] = dirToArray($dir . DIRECTORY_SEPARATOR . $value); }
+				 if (is_dir($dir . DIRECTORY_SEPARATOR . $value))  	{ $result[$value] = dirTreeToArray($dir . DIRECTORY_SEPARATOR . $value); }
 				 else	 											{ $result[] = $value; }
 			  }
 			}  			

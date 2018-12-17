@@ -11,14 +11,16 @@
 			"type"				: "RFPowerPlug",
 			"imageOn"			: "DeviceON_Purificateur_Anim.gif",
 			"imageOff"			: "DeviceOFF_Purificateur.gif",
-			"remote"			: "remote_rfcommand_chacon",
-			"desc"				: "Prise purificateur salon",
-			"position"			: {"x":37,"y":5},
+			"remote"			: "remote_rfcommand_4relais",
+			"desc"				: "Commandes purificateur salon",
+			"position"			: {"x":35,"y":4},
 			"current_state"		: "",
-			"signalsTOstate"	: 
+			"signalsTOstate"	:
 			{
-				"remote_rfcommand_chacon.GROUPS_1_BTN2_ON":"ON1" 	,"remote_rfcommand_chacon.GROUPS_2_BTN2_ON":"ON2" 	 ,"remote_rfcommand_chacon.GROUPS_3_BTN2_ON":"ON3"  ,"remote_rfcommand_chacon.GROUPS_4_BTN2_ON":"ON4" ,
-				"remote_rfcommand_chacon.GROUPS_1_BTN2_OFF":"OFF1"  ,"remote_rfcommand_chacon.GROUPS_2_BTN2_OFF":"OFF2" ,"remote_rfcommand_chacon.GROUPS_3_BTN2_OFF":"OFF3","remote_rfcommand_chacon.GROUPS_4_BTN2_OFF":"OFF4" 
+				"remote_rfcommand_4relais.BTN_A_ON":"ONOFF",
+				"remote_rfcommand_4relais.BTN_B_ON":"Func1",
+				"remote_rfcommand_4relais.BTN_C_ON":"Func2",
+				"remote_rfcommand_4relais.BTN_D_ON":"Func3"
 			}
 			,
 			"InBackground":["Etage1"]
@@ -32,16 +34,16 @@
 			"desc"				: "Prise radiateur couloir",
 			"position"			: {"x":37,"y":58},
 			"current_state"		: "",
-			"signalsTOstate"	: 
+			"signalsTOstate"	:
 			{
 				"remote_rfcommand_chacon.GROUPS_1_BTN3_ON":"ON1"  ,	"remote_rfcommand_chacon.GROUPS_2_BTN3_ON":"ON2" , "remote_rfcommand_chacon.GROUPS_3_BTN3_ON":"ON3"  ,"remote_rfcommand_chacon.GROUPS_4_BTN3_ON":"ON4",
-				"remote_rfcommand_chacon.GROUPS_1_BTN3_OFF":"OFF1","remote_rfcommand_chacon.GROUPS_2_BTN3_OFF":"OFF2", "remote_rfcommand_chacon.GROUPS_3_BTN3_OFF":"OFF3","remote_rfcommand_chacon.GROUPS_4_BTN3_OFF":"OFF4" 
+				"remote_rfcommand_chacon.GROUPS_1_BTN3_OFF":"OFF1","remote_rfcommand_chacon.GROUPS_2_BTN3_OFF":"OFF2", "remote_rfcommand_chacon.GROUPS_3_BTN3_OFF":"OFF3","remote_rfcommand_chacon.GROUPS_4_BTN3_OFF":"OFF4"
 			}
 			,
 			"InBackground":["Etage1"]
 		},
-		
-		
+
+
 		"CAM_XMSCAM":
 		{
 			"type"				: "PC",
@@ -55,22 +57,36 @@
 			"signalsTOstate"	: {},
 			"InBackground":["Etage1"]
 		},
-		
-		
+
+
+		"Plg_TempHum_Captor":
+		{
+			"type"				: "RFPowerPlug",
+			"imageOn"			: "DeviceON_SONDE_TEMPERATURE.gif",
+			"imageOff"			: "DeviceON_SONDE_TEMPERATURE.gif",
+			"remote"			: "noOne",
+			"desc"				: "Prise NAS",
+			"position"			: {"x":38,"y":4},
+			"current_state"		: "1",
+			"macAdress"			: "",
+			"signalsTOstate"	: {}
+			,
+			"InBackground":["Etage1"]
+		},
+
 		"PC_NASDlink":
 		{
 			"type"				: "RFPowerPlug",
 			"imageOn"			: "DeviceON_PC_Anim.gif",
 			"imageOff"			: "DeviceOFF_PC.gif",
-			"remote"			: "remote_rfcommand_chacon",
+			"remote"			: "remote_switch_funry_onebtn_1",
 			"desc"				: "Prise NAS",
 			"position"			: {"x":44,"y":44},
 			"current_state"		: "",
 			"macAdress"			: "fc:75:16:00:c3:c7",
-			"signalsTOstate"	: 
+			"signalsTOstate"	:
 			{
-				"remote_rfcommand_chacon.GROUPS_1_BTN1_ON":"ON1"  ,  "remote_rfcommand_chacon.GROUPS_2_BTN1_ON":"ON2"   ,"remote_rfcommand_chacon.GROUPS_3_BTN1_ON":"ON3"  ,"remote_rfcommand_chacon.GROUPS_4_BTN1_ON":"ON4" ,
-				"remote_rfcommand_chacon.GROUPS_1_BTN1_OFF":"OFF1",  "remote_rfcommand_chacon.GROUPS_2_BTN1_OFF":"OFF2" ,"remote_rfcommand_chacon.GROUPS_3_BTN1_OFF":"OFF3","remote_rfcommand_chacon.GROUPS_4_BTN1_OFF":"OFF4"
+				"remote_switch_funry_onebtn_1.BTN_A"	:	"ON1"
 			}
 			,
 			"InBackground":["Etage1"]
@@ -90,7 +106,7 @@
 			,
 			"InBackground":["Etage1"]
 		},
-		
+
 		"PC_Freebox":
 		{
 			"type"				: "PC",
@@ -104,17 +120,30 @@
 			"signalsTOstate"	: {},
 			"InBackground":["Etage1"]
 		},
-		
-		"PC_XmsPrinter":
+
+		"PC_XmsPrinterLexmark":
 		{
 			"type"				: "PC",
 			"imageOn"			: "DeviceON_Printer_Anim.gif",
 			"imageOff"			: "DeviceOFF_Printer.gif",
 			"remote"			: "NoOne",
-			"desc"				: "Imprimante wifi",
-			"position"			: {"x":33,"y":20},
+			"desc"				: "Imprimante wifi Lexmark",
+			"position"			: {"x":42,"y":4},
 			"current_state"		: "",
 			"macAdress"			: "00:20:00:19:1e:45",
+			"signalsTOstate"	: {},
+			"InBackground":["Etage1"]
+		},
+		"PC_XmsPrinterEPSON":
+		{
+			"type"				: "PC",
+			"imageOn"			: "DeviceON_Printer_Anim.gif",
+			"imageOff"			: "DeviceOFF_Printer.gif",
+			"remote"			: "NoOne",
+			"desc"				: "Imprimante wifi EPSON",
+			"position"			: {"x":42,"y":4},
+			"current_state"		: "",
+			"macAdress"			: "44:d2:44:66:ad:39",
 			"signalsTOstate"	: {},
 			"InBackground":["Etage1"]
 		},
@@ -132,7 +161,7 @@
 			"signalsTOstate"	: {},
 			"InBackground":["Etage1"]
 		},
-		
+
 		"PC_XmsPortable":
 		{
 			"type"				: "Nomade.PC",
@@ -148,12 +177,12 @@
 			"type"				: "Nomade.PC",
 			"remote"			: "NoOne",
 			"current_state"		: "",
-			"macAdress"			: ["20:6a:8a:19:b8:92","18:f4:6a:16:7e:8e"],			
+			"macAdress"			: ["20:6a:8a:19:b8:92","18:f4:6a:16:7e:8e"],
 			"position"			: {"x":0,"y":0},
 			"signalsTOstate"	: {},
 			"InBackground":["Etage1"]
 		},
-			
+
 		"PC_XmsMus":
 		{
 			"type"				: "PC",
@@ -167,7 +196,7 @@
 			"signalsTOstate"	: {},
 			"InBackground":["Etage1"]
 		},
-		
+
 		"Phone_OPOXavier":
 		{
 			"type"				: "Phone",
@@ -208,7 +237,7 @@
 			"signalsTOstate"	: {},
 			"InBackground":["Etage1"]
 		},
-		
+
 		"RFLight_Salon":
 		{
 			"type"				: "RFLight",
@@ -219,7 +248,7 @@
 			"position"			: {"x":51.2,"y":20.5},
 			"current_state"		: "",
 			"macAdress"			: "6c:19:8f:b7:41:f1",
-			"signalsTOstate"	: 
+			"signalsTOstate"	:
 			{
 				"remote_switch_dio_chacon_salon_couloir.ON1"	:	"ON1",
 				"remote_switch_dio_chacon_salon_entree.ON2"		:	"ON2",
@@ -228,7 +257,7 @@
 			},
 			"InBackground":["Etage1"]
 		},
-		
+
 		"RFLight_Chambre1":
 		{
 			"type"				: "RFSwitch",
@@ -239,38 +268,38 @@
 			"position"			: {"x":25,"y":30},
 			"current_state"		: "",
 			"macAdress"			: "6c:19:8f:b7:42:0b",
-			"signalsTOstate"	: 
+			"signalsTOstate"	:
 			{
-				"remote_switch_funry_3btn.BTN_A_ON":"ON",
-				"remote_switch_funry_3btn.BTN_C_OFF":"OFF",
-				"remote_switch_funry_3btn.BTN_B_UK1":"UNKNOWN1",
-				"remote_switch_funry_3btn.BTN_D_UK2":"UNKNOWN2"
+				"remote_switch_funry_onebtn_2.BTN_A":"ON",
+				"remote_switch_funry_onebtn_2.BTN_C":"OFF",
+				"remote_switch_funry_onebtn_2.BTN_B_UK1":"UNKNOWN1",
+				"remote_switch_funry_onebtn_2.BTN_D_UK2":"UNKNOWN2"
 			}
 			,
 			"InBackground":["Etage1"]
 		},
-		
+
 		"RFLight_Chambre2":
 		{
 			"type"				: "RFSwitch",
 			"imageOn"			: "DeviceON_LIGHT_Anim.gif",
 			"imageOff"			: "DeviceOFF_LIGHT.gif",
-			"remote"			: "remote_switch_funry_onebtn_3",
+			"remote"			: "remote_switch_funry_onebtn_4",
 			"desc"				: "Interrupteur Grande Chambre",
 			"position"			: {"x":28,"y":64},
 			"current_state"		: "",
 			"macAdress"			: "6c:19:8f:b7:42:37",
-			"signalsTOstate"	: 
+			"signalsTOstate"	:
 			{
-				"remote_switch_funry_3btn.BTN_A_ON":"ON",
-				"remote_switch_funry_3btn.BTN_C_OFF":"OFF",
-				"remote_switch_funry_3btn.BTN_B_UK1":"UNKNOWN1",
-				"remote_switch_funry_3btn.BTN_D_UK2":"UNKNOWN2"
+				"remote_switch_funry_onebtn_4.BTN_A":"ON",
+				"remote_switch_funry_onebtn_4.BTN_B":"OFF",
+				"remote_switch_funry_onebtn_4.BTN_C_UK1":"UNKNOWN1",
+				"remote_switch_funry_onebtn_4.BTN_D_UK2":"UNKNOWN2"
 			}
 			,
 			"InBackground":["Etage1"]
 		},
-		
+
 		"TV_Salon":
 		{
 			"type"				: "TV",
@@ -295,7 +324,7 @@
 			"signalsTOstate"	: {},
 			"InBackground":["Etage1"]
 		},
-		
+
 		"TV_Chambre1":
 		{
 			"type"				: "TV",

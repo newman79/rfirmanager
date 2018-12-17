@@ -133,9 +133,7 @@ function Model_GetAllRfRemotes()
 function Model_GetAllSignalsForRemote(type, remote)
 {
 	var result = [];
-	if ($.rfremotesJson === "NA") {console.warn("GetAllRfRemotes: $.rfremotesJson is not set"); return undefined;}
-	
-	
+	if ($.rfremotesJson === "NA") {console.warn("Model_GetAllSignalsForRemote: $.rfremotesJson is not set"); return undefined;}
 	
 	/*
 	if (type === "RF")
@@ -179,6 +177,9 @@ $(document).ready(function()
 	//------------------------ 									pur AJAX syncrone		 									----------------------//
 	//------------------------------------------------------------------------------------------------------------------------------------//
 	$.rfremotesJson 		= LoadFile('../data/RFSignals.json');	// $.rfremotesJson is global, i.e visible by all jQuery declarations and functions
+	
+	$.remoteShutdownJson	= LoadFile('../../xms_common/data/ShutdownOnLan.cfg.json');	
+	
 	// console.log("$.rfremotesJson is ... " ,$.rfremotesJson);
 	// console.log("protocol1 is ... " ,$.rfremotesJson['protocole1']);
 	// console.log("protocol1,startlock_low_NbPulseLength is ... " ,$.rfremotesJson['protocole1']['startlock_low_NbPulseLength']);
@@ -197,8 +198,7 @@ $(document).ready(function()
 	setInterval(function() 
 	{
 		$.devicesstatus = LoadFile("./GetDevicesStatus.php");
-		
-		
+				
 		for (first in $.devicesstatus) break;
 		if (first === 'ERROR')	{	console.log("Error : have not been able to request device's state"); return;}
 		
@@ -209,7 +209,26 @@ $(document).ready(function()
 		for (var deviceName in objects)	setDevicesNotSeen.add(deviceName);
 		
 		maxTime = 0;
-		
+
+		// Refresh shudownMethod on div objects
+		for (var devFullName in $.remoteShutdownJson)
+		{
+			jsonObject = $.remoteShutdownJson[devFullName];
+			if (jsonObject.rfirmanager !== undefined && jsonObject.rfirmanager.match(/^PC_.*$/) != undefined)
+			{
+				var idObjectStr = "#idDevice_" + jsonObject.rfirmanager;
+				if ( $(idObjectStr).length )
+				{
+					if ($(idObjectStr).attr("shutdownMethod_"+devFullName) === undefined) 
+					{ 
+						//jsonObjectStr = JSON.stringify(jsonObject);
+						$(idObjectStr).attr("shutdownMethod_"+devFullName,devFullName); 
+						//JSON.parse(json)   pour retransfer en objet json l'attribut shudownMethod_<nomInterfaceReseau>
+					}
+				}
+			}
+		}
+				
 		// Pour chaque objet du plan courant
 		for (var device in objects)
 		{
@@ -221,15 +240,17 @@ $(document).ready(function()
 			{
 				deviceMac 	= deviceRow.split('_')[0];
 				deviceIp 	= deviceRow.split('_')[1];
-				if (macAdress === deviceMac)
+				if (macAdress === deviceMac) // cela signifie qu'il est toujours détecté (le fichier des devices étant toujours présent)
 				{
 					setDevicesSeen.add(device);
-					$("#idDevice_" + device).attr("deviceIp",deviceIp);
+					idObjectStr = "#idDevice_" + device;
+					// récupérer la date la plus fraiche de raffraichissement des fichiers de description des devices sur le réseau local
 					var dayHoro = $.devicesstatus[deviceRow].split('_');
 					dateStr = dayHoro[0].substring(0,4)+'/'+dayHoro[0].substring(4,6)+'/'+dayHoro[0].substring(6,8)+' '+dayHoro[1].substring(0,2)+':'+dayHoro[1].substring(2,4)+':'+dayHoro[1].substring(4,6);
 					time = Date.parse(dateStr) / 1000;
 					if (maxTime < time)	maxTime = time;
 					$("#idDevice_" + device).attr("LastStateUpdate",time);
+					$("#idDevice_" + device).attr("deviceIp",deviceIp);
 					
 					setDevicesNotSeen.delete(device);
 					break;

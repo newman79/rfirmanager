@@ -1,39 +1,53 @@
 {
+	"protocole<Id>_SyntaxDemo":
+	{
+		"_comment0" : "Chaque protocole est doit porter le nom 'protocol' suivi d'un <Id>, qui est un entier non déjà pris par un autre protocole.",
+		"_comment1" : "Pour chaque signal, on identifie une période de pulsation. Cette période(durée) correspond à la durée utilisée pour coder 1 bit de donnée, par modulation d'un signal HIGH ou LOW.",
+		"_comment2" : "Dans la définition des protocole, toutes les temps seront donnés en nombre de période de pulsation, et non en milliseconde",
+		"_comment3" : "La durée de la pulsation doit être indiquée dans la définition du signal",
+		"startlock_low_NbPulseLength":			33,
+		"endlock_low_NbPulseLength":			33,
+		"_comment":"définit qu'un 0 est encodé par à HIGH(3*pulseLength)us-->LOW(1*pulseLength)us",
+		"OneEncoding_highlow_NbPulseLength":	[3,1],
+		"ZeroEncoding_highlow_NbPulseLength":	[1,3],
+		"comment": "PresendSignalCodeTransformation is an optionnal field",
+		"PresendSignalCodeTransformation": "MANCHESTER"
+	},
 	"protocole1":
 	{
 		"startlock_low_NbPulseLength":			33,
 		"endlock_low_NbPulseLength":			33,
-		"OneEncodingInNbPulse":					[3,1],
-		"ZeroEncodingInNbPulse":				[1,3]
+		"_comment":"définit qu'un 0 est encodé par à HIGH(3*pulseLength)us-->LOW(1*pulseLength)us",
+		"OneEncoding_highlow_NbPulseLength":	[3,1],
+		"ZeroEncoding_highlow_NbPulseLength":	[1,3]
 	},
 	"protocole2":
 	{
 		"startlock_low_NbPulseLength":			10,
 		"endlock_low_NbPulseLength":			10,
-		"OneEncodingInNbPulse":					[2,1],
-		"ZeroEncodingInNbPulse":				[1,2]
+		"_comment":"définit qu'un 0 est encodé par à HIGH(3*pulseLength)us-->LOW(1*pulseLength)us",
+		"OneEncoding_highlow_NbPulseLength":	[3,1],
+		"ZeroEncoding_highlow_NbPulseLength":	[1,3]
 	},
 	"protocole3":
 	{
 		"startlock_low_NbPulseLength":			11.24,
 		"endlock_low_NbPulseLength":			42.82,
-		"OneEncodingInNbPulse":					[1,1.26],
-		"ZeroEncodingInNbPulse":				[1,5.5],
+		"_comment":"définit qu'un 0 est encodé par à HIGH(3*pulseLength)us-->LOW(1*pulseLength)us",
+		"OneEncoding_highlow_NbPulseLength":	[1,1.26],
+		"ZeroEncoding_highlow_NbPulseLength":	[1,5.5],
 		"PresendSignalCodeTransformation": "MANCHESTER"
 	},
 
-
-	
-	
-	
-  	"remote_switch_dio_by_chacon_salon_couloir" : 
+	"_comment":"*********************************** DEFINITION DES SIGNAUX ************************************************",
+  	"remote_switch_dio_by_chacon_salon_couloir" :
     {
 		"protocol": 				3,
 		"pulseLength":				250,
        	"StartlockHighLowInUS": 	[200,2810],
        	"EndlockHighLowInUS": 		[240,10704],
 		"PresendSignalCodeTransformation": "MANCHESTER",
-		"signals": 
+		"signals":
 		{
 			"ON1":[1,0,1,1,0,0,1,1,0,0,1,0,1,1,0,1,0,0,0,0,0,0,0,1,0,1,1,0,1,1,1,1],
 			"OFF1":[1,0,1,1,0,0,1,1,0,0,1,0,1,1,0,1,0,0,0,0,0,0,0,1,0,1,1,1,1,1,1,1],
@@ -47,40 +61,75 @@
        	"StartlockHighLowInUS": 	[200,2810],
        	"EndlockHighLowInUS": 		[240,10704],
 		"PresendSignalCodeTransformation": "MANCHESTER",
-		"signals": 
+		"signals":
 		{
-			"ON1":[1,0,1,1,1,0,1,1,1,0,1,1,0,1,0,0,1,0,0,0,1,1,1,1,0,1,1,0,1,1,1,1], 
+			"ON1":[1,0,1,1,1,0,1,1,1,0,1,1,0,1,0,0,1,0,0,0,1,1,1,1,0,1,1,0,1,1,1,1],
 			"OFF1":[1,0,1,1,1,0,1,1,1,0,1,1,0,1,0,0,1,0,0,0,1,1,1,1,0,1,1,1,1,1,1,1],
-			"ON2":[1,0,1,1,1,0,1,1,1,0,1,1,0,1,0,0,1,0,0,0,1,1,1,1,0,1,1,0,1,1,1,0], 
+			"ON2":[1,0,1,1,1,0,1,1,1,0,1,1,0,1,0,0,1,0,0,0,1,1,1,1,0,1,1,0,1,1,1,0],
 			"OFF2":[1,0,1,1,1,0,1,1,1,0,1,1,0,1,0,0,1,0,0,0,1,1,1,1,0,1,1,1,1,1,1,0]
 		}
     },
 
-
-
-
-
-    "remote_switch_funry_onebtn_1" : 
+    "remote_switch_funry_onebtn_4" :
     {
 		"protocol": 			1,
 		"pulseLength":			350,
 		"SignalBitNumber": 		24,
-		"signals":	
+		"signals":
 		{
-			"BTN_A_ON":1371208,
-			"BTN_B_OFF":1371204,
-			"BTN_C_UK1":1371201,
-			"BTN_D_UK2":1371202
+			"BTN_A":8845316,
+			"BTN_B":8845313,
+			"BTN_C":8845313,
+			"BTN_D":8845313
 		}
 	},
-    "remote_switch_funry_3btn_1" : 
+    "remote_switch_funry_onebtn_1" :
+    {
+		"protocol": 			1,
+		"pulseLength":			350,
+		"SignalBitNumber": 		24,
+		"signals":
+		{
+			"BTN_A":1371208,
+			"BTN_B":1371204,
+			"BTN_C":1371201,
+			"BTN_D":1371202
+		}
+	},
+    "remote_switch_funry_onebtn_2" :
+    {
+		"protocol": 							1,
+		"pulseLength":					350,
+		"SignalBitNumber": 		24,
+		"signals":
+		{
+			"BTN_A":2121540,
+			"BTN_B":2121537,
+			"BTN_C":2121544,
+			"BTN_D":2121538
+		}
+	},
+    "remote_switch_funry_onebtn_3" :
+    {
+		"protocol": 							1,
+		"pulseLength":					350,
+		"SignalBitNumber": 		24,
+		"signals":
+		{
+			"BTN_A":8845316,
+			"BTN_B":8845313,
+			"BTN_C":8845320,
+			"BTN_D":8845314
+		}
+	},
+    "remote_switch_funry_3btn_1" :
     {
 		"protocol": 			1,
 		"pulseLength":			350,
 		"SignalBitNumber": 		24,
        	"ZeroHighLowInUS": 		[290,970],
-       	"OneHighLowInUS": 		[970,290],		
-		"signals":	
+       	"OneHighLowInUS": 		[970,290],
+		"signals":
 		{
 			"BTN_A_ON":3258520,
 			"BTN_B_OFF":3258516,
@@ -89,9 +138,7 @@
 		}
 	},
 
-
-
-	"remote_radiocommanded_chacon":
+	"remote_rfcommand_chacon":
 	{
 		"protocol": 				1,
 		"pulseLength":				428,
@@ -101,10 +148,66 @@
 		"SignalBitNumber": 				24,
 		"signals":
 		{
-			"GROUPS_1_BTN1_ON":1381717  ,"GROUPS_1_BTN1_OFF":1381716  ,"GROUPS_1_BTN2_ON":1394005  ,"GROUPS_1_BTN2_OFF":1394004  ,"GROUPS_1_BTN3_ON":1397077  ,"GROUPS_1_BTN3_OFF":1397076  ,"GROUPS_1_BTN4_ON":1397845  ,"GROUPS_1_BTN4_OFF":1397844,
-			"GROUPS_2_BTN1_ON":4527445 ,"GROUPS_2_BTN1_OFF":4527444 ,"GROUPS_2_BTN2_ON":4539733 ,"GROUPS_2_BTN2_OFF":4539732 ,"GROUPS_2_BTN3_ON":4542805 ,"GROUPS_2_BTN3_OFF":4542804 ,"GROUPS_2_BTN4_ON":4543573 ,"GROUPS_2_BTN4_OFF":4543572,
-			"GROUPS_3_BTN1_ON":5313877,"GROUPS_3_BTN1_OFF":5313876,"GROUPS_3_BTN2_ON":5326165,"GROUPS_3_BTN2_OFF":5326164,"GROUPS_3_BTN3_ON":5329237,"GROUPS_3_BTN3_OFF":5329236,"GROUPS_3_BTN4_ON":5330005,"GROUPS_3_BTN4_OFF":5330004,
-			"GROUPS_4_BTN1_ON":5510485 ,"GROUPS_4_BTN1_OFF":5510484 ,"GROUPS_4_BTN2_ON":5522773 ,"GROUPS_4_BTN2_OFF":5522772 ,"GROUPS_4_BTN3_ON":5525845 ,"GROUPS_4_BTN3_OFF":5525844 ,"GROUPS_4_BTN4_ON":5526613 ,"GROUPS_4_BTN4_OFF":5526612
+			"GROUPS_1_BTN1":1381717  ,"GROUPS_1_BTN1":1381716  ,"GROUPS_1_BTN2":1394005  ,"GROUPS_1_BTN2":1394004  ,"GROUPS_1_BTN3":1397077  ,"GROUPS_1_BTN3":1397076  ,"GROUPS_1_BTN4":1397845  ,"GROUPS_1_BTN4":1397844,
+			"GROUPS_2_BTN1":4527445 ,"GROUPS_2_BTN1":4527444 ,"GROUPS_2_BTN2":4539733 ,"GROUPS_2_BTN2":4539732 ,"GROUPS_2_BTN3":4542805 ,"GROUPS_2_BTN3":4542804 ,"GROUPS_2_BTN4":4543573 ,"GROUPS_2_BTN4":4543572,
+			"GROUPS_3_BTN1":5313877,"GROUPS_3_BTN1":5313876,"GROUPS_3_BTN2":5326165,"GROUPS_3_BTN2":5326164,"GROUPS_3_BTN3":5329237,"GROUPS_3_BTN3":5329236,"GROUPS_3_BTN4":5330005,"GROUPS_3_BTN4":5330004,
+			"GROUPS_4_BTN1":5510485 ,"GROUPS_4_BTN1":5510484 ,"GROUPS_4_BTN2":5522773 ,"GROUPS_4_BTN2":5522772 ,"GROUPS_4_BTN3":5525845 ,"GROUPS_4_BTN3":5525844 ,"GROUPS_4_BTN4":5526613 ,"GROUPS_4_BTN4":5526612
 		}
-	}	
+	},
+
+	"remote_rfcommand_4relais":
+	{
+		"protocol": 				1,
+		"pulseLength":				410,
+       	"StartlockHighLowInUS": 	[400,12350],
+       	"EndlockHighLowInUS": 		[400,12350],
+		"PresendSignalCodeTransformation": "NONE",
+		"SignalBitNumber": 			24,
+		"signals":
+		{
+			"BTN_A":4918840,
+			"BTN_B":4918836,
+			"BTN_C":4918834,
+			"BTN_D":4918833
+		}
+	},
+
+	"remote_radioCommanded_12VControl":
+	{
+		"protocol": 				1,
+		"pulseLength":				410,
+       	"StartlockHighLowInUS": 	[400,12350],
+       	"EndlockHighLowInUS": 		[400,12350],
+		"PresendSignalCodeTransformation": "NONE",
+		"SignalBitNumber": 			24,
+		"signals":
+		{
+			"Power":1903873,
+			"PowerOff":1903872,
+			"Light":1903876,
+			"Bright+":1903878,
+			"Bright-":1903877,
+			"100%":1903879,
+			"50%":1903880,
+			"25%":1903881,
+			"Mode+":1903883,
+			"Mode-":1903889,
+			"Speed-":1903885,
+			"Speed+":1903887
+		}
+	},
+	"rf433ToIR":
+	{
+		"protocol": 				1,
+		"pulseLength":				410,
+       	"StartlockHighLowInUS": 	[400,12350],
+       	"EndlockHighLowInUS": 		[400,12350],
+		"PresendSignalCodeTransformation": "NONE",
+		"SignalBitNumber": 			56,
+		"signals":
+		{
+			"Test1":[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,1,0,1,0,0,1,0,0,1,0,1,1,1,1,1,0,0,1,1,1,0,0,1,0,1,1,1,0,0,1,1,0,1,0,1,1],
+			"Test2":[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,1,0,1,0,0,1,0,0,1,0,1,1,1,1,1,0,0,1,1,1,0,0,1,0,1,1,1,0,0,1,1,0,1,0,1,0]
+		}
+	}
 }

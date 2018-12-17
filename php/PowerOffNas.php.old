@@ -1,0 +1,29 @@
+<?
+	# Prerequisite : intall libssh for php : 					# sudo apt-get install libssh2-php
+	# Ce php peut être testé directement à partir du shell : 	# php /var/www/rfirmanager/php/PowerOffNas.php
+	
+	$scpServer = "192.168.1.5";
+	$scpUser = "root";
+	$scpPassword = "free1979";
+
+	$conn = ssh2_connect($scpServer, 22); 	
+	ssh2_auth_password($conn, $scpUser, $scpPassword);
+
+    $stream = ssh2_exec( $conn, "ls" );
+	stream_set_blocking( $stream, true );
+	print  fread( $stream, 4096 );
+	
+	$stream = ssh2_exec( $conn, "poweroff -nf" );
+	stream_set_blocking( $stream, true );
+	print  fread( $stream, 4096 );
+	
+	// En shell c'est plus dur à faire, impossible de rentrer le mot de passe automatiquement sans utiliser expect par exemple
+	//#!/bin/bash
+	// USERNAME=root
+	// HOST="192.168.1.5"
+	// SCRIPT="pwd; ls"
+	// for HOSTNAME in ${HOSTS} ; do
+		// ssh -o StrictHostKeyChecking=no -l ${USERNAME} ${HOSTNAME} "${SCRIPT}"
+	// done	
+	
+?>

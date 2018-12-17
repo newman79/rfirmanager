@@ -1,11 +1,9 @@
 <?
-	$expire = 365*24*3600;
-	setcookie("nickname","xeros",time()+$expire);
-	setcookie("nom","potec",time()+$expire);
-	setcookie("prenom","fabrice",time()+$expire);
-
 	session_start();
-	
+
+	$expire = 365*24*3600;
+	setcookie("nickname","xeros",time()+$expire);	setcookie("nom","monNom",time()+$expire);	setcookie("prenom","monPrenom",time()+$expire);
+
 	$userlogin = $_SESSION['userlogin'];	
 	
 	if (isSet($_SESSION['SessionStartedAt'])){					
@@ -18,25 +16,6 @@
 		}
 	}
 	else {header("Location:../php/RFIRManagerLogin.php");}	// Sinon, il faut mettre à jour la session
-	
-	// Crypter et décrypter avec Blowfish
-	// $dataToProtect = 'my secret text';
-	// $key = 'my secret key';
-	// $iv = '12345678';
-
-	// $cipher = mcrypt_module_open(MCRYPT_BLOWFISH,'','cbc','');
-
-	// mcrypt_generic_init($cipher, $key, $iv);
-	// $encrypted = mcrypt_generic($cipher,$dataToProtect);
-	// mcrypt_generic_deinit($cipher);
-
-	// mcrypt_generic_init($cipher, $key, $iv);
-	// $decrypted = mdecrypt_generic($cipher,$encrypted);
-	// mcrypt_generic_deinit($cipher);
-
-	// echo "<br /> encrypted : ".$encrypted . "   decrypted : ".$decrypted;
-	// ==> On encrypt puis on fait un setcookie pour le fournir au navigateur
-	// 		Quand on recoit du navigateur $cookie est crypté avec la clé secrete du serveur ==> on la décriffre
 ?>
 
 <!DOCTYPE html>
@@ -44,27 +23,24 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <title>RBPI : Domotic managment, RF/IR commands and signal events</title>
+		
         <link rel="stylesheet" href="../css/jquery.iviewer.css" />
         <link rel="stylesheet" href="../css/jquery.mainmenu.css" />
-        <link rel="stylesheet" href="../jquery-ui-1.11.4/jquery-ui.css" />
-		<link rel="stylesheet" href="../jquery-ui-1.11.4.custom/jquery-ui.css" />
+        <link rel="stylesheet" href="../../xms_common/js/jquery-ui-1.11.4/jquery-ui.css" />
+		<link rel="stylesheet" href="../../xms_common/js/jquery-ui-1.11.4.custom/jquery-ui.css" />		
+        <link rel="stylesheet" href="../../xms_common/js/jqGrid_JS_5_0_2/css/ui.jqgrid.css" />
 		
-        <link rel="stylesheet" href="../jqGrid_JS_5_0_2/css/ui.jqgrid.css" />
-		
-        <!-- <script type="text/javascript" src="jquery-1.12.0.js">									</script> -->		
-		<script type="text/javascript" src="../jqGrid_JS_5_0_2/js/jquery-1.11.0.min.js">			</script>
-		
-        <script type="text/javascript" src="../jquery-ui-1.11.4/jquery-ui.js">						</script>								
-        <script type="text/javascript" src="../jquery-mousewheel-3.1.13/jquery.mousewheel.js">		</script>
-        <script type="text/javascript" src="../js/rfir.model.js">										</script>
-        <script type="text/javascript" src="../js/jquery.iviewer.js">									</script>
-        <script type="text/javascript" src="../js/jquery.mainmenu.js">									</script>
+		<script type="text/javascript" src="../../xms_common/js/jqGrid_JS_5_0_2/js/jquery-1.11.0.min.js">			</script>		
+        <script type="text/javascript" src="../../xms_common/js/jquery-ui-1.11.4/jquery-ui.js">						</script>								
+        <script type="text/javascript" src="../../xms_common/js/jquery-mousewheel-3.1.13/jquery.mousewheel.js">		</script>
+        <script type="text/javascript" src="../js/rfir.model.js">													</script>
+        <script type="text/javascript" src="../js/jquery.iviewer.js">												</script>
+        <script type="text/javascript" src="../js/jquery.mainmenu.js">												</script>
+		<script type="text/javascript" src="../../xms_common/js/jqGrid_JS_5_0_2/js/i18n/grid.locale-fr.js">			</script>
+		<script type="text/javascript" src="../../xms_common/js/jqGrid_JS_5_0_2/js/jquery.jqGrid.min.js">			</script>							 
+        <script type="text/javascript" src="../js/jquery.applievents.js">											</script>
 
-		<script type="text/javascript" src="../jqGrid_JS_5_0_2/js/i18n/grid.locale-fr.js">			</script>
-		<script type="text/javascript" src="../jqGrid_JS_5_0_2/js/jquery.jqGrid.min.js">			</script>							 
-        <script type="text/javascript" src="../js/jquery.applievents.js">								</script>
-
-        <script type="text/javascript">
+        <script type="text/javascript">		
             var $ = jQuery;
             $(document).ready(function(){
 				/*
@@ -77,32 +53,10 @@
 				*/
 				var mainViewer = $("#idDivViewer").iviewer({current_planName: "Plan1_RFIRObjects.json"});
 
-				$("#chimg").click(function()
-				{
-					$("#idDivViewer").iviewer('loadImage', "../img/test_image2.jpg");
-					return false;
-				});
-				
-				$(".cCustomMenu li").click(function()
-				{
-					var itemStr = $(this).attr("data-action");
-					console.log("data-action" + itemStr);
-				
-					// This is the triggered action name
-					switch(itemStr) 
-					{
-						// A case for each action. Your actions here
-						//case "first": alert("first"); break;
-						//case "second": alert("second"); break;
-					}
-					$("#idUlContextMenu").hide(100); // Hide it AFTER the action was triggered
-				  });
-				});
-				
-				$(window).resize(function() {
-					$().resizeAlljqGrids();
-				});
-				
+				$("#chimg").click(function() { $("#idDivViewer").iviewer('loadImage', "../img/test_image2.jpg"); return false; });
+
+				$(window).resize(function() { $().resizeAlljqGrids(); }); // Redimensionner le widgets jqgrid de l'onglet events
+			});
         </script>
     </head>
     <body>
@@ -179,7 +133,7 @@
 																			<select id="idSelectDeviceName"  size="6"	style="width:200px;"></select> <br />
 								
 								<label style="height:50px;top:-30px;line-height: 50px;">Signals</label>						
-																			<select id="idSelectCommandedWith" size="4" 	style="width:200px;"></select> <br />
+																			<select id="idSelectCommandedWith" size="8" 	style="width:200px;"></select> <br />
 								<input id="idBtnSendSignal" type="button" style="position:relative; margin-left:150px; margin-top:5px; bottom:-3px; display:none; width:60px; height:40px;  border: 1px solid #4fb8ef; border-radius:6px; background:url(../img/ButtonSend.gif) center center no-repeat; background-size:100% 100%;" 
 								onmouseover="this.style.border='4px solid #4fb8ef';" onmouseout="this.style.border='1px solid #4fb8ef';"></input> <br />&nbsp;
 								
@@ -202,19 +156,17 @@
 				<div id="idDivStatus" style="display:block; height:10%;"> <!-- Fenetre des événements -->
 					<textarea  id="idInputStatus"	readonly		type="text"  	name="Status"	 style="font-size: 10px; resize: none; display:block; width: 100%; -webkit-box-sizing: border-box;  -moz-box-sizing: border-box;  box-sizing: border-box; top:0px; bottom:0px; background:#EEEEEE; height:95%"	rows="3"></textarea>
 				</div>
-			
-				
 			</div>
 		</div>
 		<!-- **** Le menu contextuel click droit **** -->
 		<ul id="idUlContextMenu" class="cCustomMenu">
-		  <div style="border-bottom :1px solid #313030; height:20px; margin-bottom:5px; background:#b3e4ff; text-align:center">Menu</div>
-		  <li id="idLiContextMenu1" data-action="callActivateSelectedObject">Send signal ON</li>
-		  <li id="idLiContextMenu2" data-action="callDesactivateSelectedObject">Send signal OFF</li>
+		  <div id="idLiContextMenuLibelle" style="border-bottom :1px solid #313030; height:20px; margin-bottom:5px; background:#b3e4ff; text-align:center">Menu</div>
+		  <li id="idLiContextMenuCustom1" data-action="callActivateSelectedObject">Send signal ON</li>
+		  <li id="idLiContextMenuCustom2" data-action="callDesactivateSelectedObject">Send signal OFF</li>
+		  <div id="idDivContextMenuFirstSeparator" style="border-bottom :1px solid #313030; height:5px; margin-bottom:5px;"></div>
+		  <li id="idLiContextMenuEdit" data-action="callEditSelectedObject">Editer</li>
 		  <div style="border-bottom :1px solid #313030; height:5px; margin-bottom:5px;"></div>
-		  <li id="idLiContextMenu4" data-action="callEditSelectedObject">Editer</li>
-		  <div style="border-bottom :1px solid #313030; height:5px; margin-bottom:5px;"></div>
-		  <li id="idLiContextMenu5" data-action="callCancel">Annuler</li>
+		  <li id="idLiContextMenuCancel" data-action="callCancel">Annuler</li>
 		</ul>				
 		
     </body>

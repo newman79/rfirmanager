@@ -2,6 +2,17 @@
 	$filepath = "/var/www/rfirmanager/data/rfirevents/outputs.log";
 	$handle = @fopen($filepath, "r");
 	$result = array();
+		
+	$lastModified = filemtime($filepath);
+	if (time() - $lastModified >= 3600) /* in seconds */
+	{
+		file_put_contents($filepath, "");
+	}
+	elseif (filesize($filepath) > 10000)
+	{
+		file_put_contents($filepath, "");
+	}
+	
 	if ($handle) 
 	{
 		$i = 0;
